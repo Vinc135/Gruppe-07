@@ -1,5 +1,8 @@
-def main():
-    print("Hello World!")
+from functions import draw_menu
+import curses
 
-if __name__ == "__main___":
+def main():
+    curses.wrapper(draw_menu)
+
+if __name__ == "__main__":
     main()
