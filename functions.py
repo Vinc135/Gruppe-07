@@ -95,56 +95,105 @@ def handle_user_input(
         stdscr.refresh()
 
 ## Menu #####################################################################
-
 def main_menu():
-
     menu_options = [
-        "(0) Garagen Menü",
-        "(1) Autos ausleihen",
+        "(0) Auto hinzufügen",
+        "(1) Alle Autos anzeigen",
+        "(2) Freie Autos anzeigen",
+        "(3) Vermietete Autos anzeigen"
     ]
 
     action_map = {
-        0: (lambda stdscr: garage_menu(stdscr), ActionType.MENU),
-        1: (lambda stdscr: autos_ausleihen(stdscr), ActionType.MENU),
+        0: (lambda stdscr: auto_hinzufuegen(stdscr), ActionType.MENU),
+        1: (lambda stdscr: autos_anzeigen(stdscr), ActionType.MENU),
+        2: (lambda stdscr: freie_autos(stdscr), ActionType.MENU),
+        3: (lambda stdscr: vergebene_autos(stdscr), ActionType.MENU),
     }
 
-    return menu_options, action_map, "Main menu"
+    return menu_options, action_map, "Main Menu"
 
-def garage_menu(stdscr):
-    curses.curs_set(0)  # Hide the cursor
-    menu_options = [
-        "(0) BACK",
-        "(1) Schleife mit Autos"
-    ]
-    
+############ Filter Typen
+
+def autos_anzeigen(stdscr):
+    return auto_liste_menu(stdscr, filter_type="alle", title="Alle Autos")
+
+def freie_autos(stdscr):
+    return auto_liste_menu(stdscr, filter_type="frei", title="Freie Autos")
+
+def vergebene_autos(stdscr):
+    return auto_liste_menu(stdscr, filter_type="verliehen", title="Vermietete Autos")
+
+
+#### Allgemeines Listen Menü für alle Autos
+def auto_liste_menu(stdscr, filter_type, title):
+    curses.curs_set(0)
+
+    menu_options = ["(0) BACK"]
+
     action_map = {
-        0: (lambda stdscr: main_menu(), ActionType.MENU),  # Back to main menu
-        1: (
-            lambda stdscr: #funktion von Auto,
-            ActionType.ACTION,
-        )
+        0: (lambda stdscr: main_menu(), ActionType.MENU)
     }
 
-    return menu_options, action_map, "Garagen Menü"
-
-def autos_ausleihen(stdscr):
-    curses.curs_set(0)  # Hide the cursor
-    menu_options = [
-        "(0) BACK",
-    ]
-
-    
-    action_map = {
-        0: (lambda stdscr: main_menu(), ActionType.MENU),  # Back to main menu
-    }
+    garage = Garage()
+    autos = garage.alle_autos()
 
     i = 1
-    garage = Garage()
-    autos = garage.verfügbare_autos()
     for kennzeichen, daten in autos.items():
+
+        if filter_type == "frei" and daten["verliehen"]:
+            continue
+        if filter_type == "verliehen" and not daten["verliehen"]:
+            continue
+
         menu_options.append(
             f"({i}) {kennzeichen} | {daten['marke']} | {daten['tagespreis']}€/Tag"
         )
 
+        action_map[i] = (
+            lambda stdscr, k=kennzeichen: auto_detail_menu(stdscr, k),
+            ActionType.MENU
+        )
 
-    return menu_options, action_map, "Autos ausleihen Menü"
+        i += 1
+
+    return menu_options, action_map, title
+
+def auto_detail_menu(stdscr, kennzeichen):
+    curses.curs_set(0)
+
+    garage = Garage()
+    auto = garage.auto_finden(kennzeichen)
+
+    menu_options = [
+        "(0) BACK",
+        "(1) Auto löschen",
+        "(2) Auto bearbeiten",
+        "(3) Freigeben (nur wenn vermietet)",
+        "(4) Blockieren (nur wenn frei)"
+    ]
+
+    action_map = {
+        0: (lambda stdscr: autos_anzeigen(stdscr), ActionType.MENU),
+
+        1: (lambda stdscr: delete_and_refresh(stdscr, garage, kennzeichen), ActionType.ACTION),
+
+        2: (lambda stdscr: auto_bearbeiten(stdscr, kennzeichen), ActionType.MENU),
+
+        3: (
+            lambda stdscr: garage.zurueckgeben(kennzeichen)
+            if auto["verliehen"] else None,
+            ActionType.ACTION
+        ),
+
+        4: (
+            lambda stdscr: garage.verleihen(kennzeichen, 1)
+            if not auto["verliehen"] else None,
+            ActionType.ACTION
+        ),
+    }
+
+    return menu_options, action_map, f"Auto {kennzeichen}"
+
+def delete_and_refresh(stdscr, garage, kennzeichen):
+    garage.auto_entfernen(kennzeichen)
+    autos_anzeigen(stdscr)
