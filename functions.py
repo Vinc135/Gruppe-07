@@ -93,6 +93,7 @@ def handle_user_input(
 
         stdscr.refresh()
 
+## Menu #####################################################################
 
 def main_menu():
 
@@ -118,7 +119,7 @@ def garage_menu(stdscr):
     action_map = {
         0: (lambda stdscr: main_menu(), ActionType.MENU),  # Back to main menu
         1: (
-            lambda stdscr: perform_action_with_output(stdscr, mcl.output_one_draftshield_status()),
+            lambda stdscr: #funktion von Auto,
             ActionType.ACTION,
         )
     }
