@@ -1,5 +1,6 @@
 import curses
 from action_type_attribute import *
+from garage import Garage 
 
 def draw_menu(stdscr):
 
@@ -130,17 +131,20 @@ def autos_ausleihen(stdscr):
     curses.curs_set(0)  # Hide the cursor
     menu_options = [
         "(0) BACK",
-        "(1) BMW...",
-        "(2) VW...",
-        "(3) Skoda..."
     ]
+
     
     action_map = {
         0: (lambda stdscr: main_menu(), ActionType.MENU),  # Back to main menu
-        1: (
-            lambda stdscr: perform_action_with_output(stdscr, mcl.output_one_draftshield_status()),
-            ActionType.ACTION,
-        )
     }
+
+    i = 1
+    garage = Garage()
+    autos = garage.verfügbare_autos()
+    for kennzeichen, daten in autos.items():
+        menu_options.append(
+            f"({i}) {kennzeichen} | {daten['marke']} | {daten['tagespreis']}€/Tag"
+        )
+
 
     return menu_options, action_map, "Autos ausleihen Menü"

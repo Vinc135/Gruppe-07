@@ -2,45 +2,82 @@ import json
 import os
 
 class Auto:
-    def __init__(self, id, marke, verbrauch, baujahr, verliehen=False):
-        self.id = str(id)
+    FILE = "autos.json"
+
+    def __init__(self, kennzeichen, marke, modell, baujahr, kilometer, verbrauch, tagespreis, verliehen=False, verliehen_bis=0):
+        self.kennzeichen = str(kennzeichen)
         self.marke = marke
-        self.verbrauch = verbrauch
+        self.modell = modell
         self.baujahr = baujahr
+        self.kilometer = kilometer
+        self.verbrauch = verbrauch
+        self.tagespreis = tagespreis
         self.verliehen = verliehen
+        self.verliehen_bis = verliehen_bis
 
-    def add_auto(self):
-        with open("data.json", "r") as f:
-            data = json.load(f)
+    @classmethod
+    def _load(cls):
+        if os.path.exists(cls.FILE):
+            with open(cls.FILE, "r") as f:
+                return json.load(f)
+        return {}
 
-        data[self.id] = {
-            "marke": self.marke,
-            "verbrauch": self.verbrauch,
-            "baujahr": self.baujahr,
-            "verliehen": self.verliehen
-        }
-
-        with open("data.json", "w") as f:
+    @classmethod
+    def _save(cls, data):
+        with open(cls.FILE, "w") as f:
             json.dump(data, f, indent=4)
 
-    def load_auto(self):
-        with open("data.json", "r") as f:
-            data = json.load(f)
+    def _refresh(self):
+        data = self._load()
+        return data.get(self.kennzeichen)
 
-        return data.get(self.id)
+    def verleihen(self, tage):
+        data = self._load()
+        auto = data.get(self.kennzeichen)
 
-    def is_verliehen(self):
-        auto = self.load_auto()
-        return auto["verliehen"] if auto else None
-    
-    def get_marke(self):
-        auto = self.load_auto()
-        return auto["marke"] if auto else None
+        if not auto or auto["verliehen"]:
+            return False
 
-    def get_verbrauch(self):
-        auto = self.load_auto()
-        return auto["verbrauch"] if auto else None
+        auto["verliehen"] = True
+        auto["verliehen_bis"] = tage
+        data[self.kennzeichen] = auto
 
-    def get_baujahr(self):
-        auto = self.load_auto()
-        return auto["baujahr"] if auto else None
+        self._save(data)
+        return True
+
+    def zurückgeben(self):
+        data = self._load()
+        auto = data.get(self.kennzeichen)
+
+        if not auto:
+            return False
+
+        auto["verliehen"] = False
+        auto["verliehen_bis"] = 0
+
+        data[self.kennzeichen] = auto
+        self._save(data)
+        return True
+
+    def is_verfügbar(self):
+        auto = self._refresh()
+        return auto and not auto["verliehen"]
+
+    def fahrt_hinzufügen(self, kilometer):
+        data = self._load()
+        auto = data.get(self.kennzeichen)
+
+        if not auto:
+            return False
+
+        auto["kilometer"] += kilometer
+        data[self.kennzeichen] = auto
+
+        self._save(data)
+        return True
+
+    def get_info(self):
+        return self._refresh()
+
+    def berechne_mietpreis(self, tage):
+        return self.tagespreis * tage
