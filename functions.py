@@ -180,9 +180,9 @@ def auto_detail_menu(stdscr, kennzeichen):
         2: (lambda stdscr: auto_bearbeiten(stdscr, kennzeichen), ActionType.MENU),
 
         3: (
-            lambda stdscr: garage.zurueckgeben(kennzeichen)
+            lambda stdscr: freigeben_screen(stdscr, kennzeichen)
             if auto["verliehen"] else None,
-            ActionType.ACTION
+            ActionType.MENU
         ),
 
         4: (
@@ -193,6 +193,28 @@ def auto_detail_menu(stdscr, kennzeichen):
     }
 
     return menu_options, action_map, f"Auto {kennzeichen}"
+
+def freigeben_screen(stdscr, kennzeichen):
+    curses.curs_set(0)
+    garage = Garage()
+    
+    # Auto freigeben und Daten laden
+    garage.zurueckgeben(kennzeichen)
+    auto = garage.auto_finden(kennzeichen)
+    autoname = f"{auto['marke']} {auto['modell']}"
+    
+    # Bestätigungsbildschirm anzeigen
+    while True:
+        stdscr.clear()
+        stdscr.addstr(0, 0, f"Das Auto {kennzeichen} {autoname} wurde freigegeben")
+        stdscr.addstr(2, 0, "Press the right arrow key to go back...")
+        
+        key = stdscr.getch()
+        
+        if key == curses.KEY_RIGHT:
+            return vergebene_autos(stdscr)
+        
+        stdscr.refresh()
 
 def delete_and_refresh(stdscr, garage, kennzeichen):
     garage.auto_entfernen(kennzeichen)
