@@ -169,7 +169,7 @@ def auto_detail_menu(stdscr, kennzeichen):
         "(1) Auto löschen",
         "(2) Auto bearbeiten", #LASSE
         "(3) Freigeben (nur wenn vermietet)", #TONI
-        "(4) Vermieten (nur wenn frei)" #VINCENT
+        "(4) Vermieten (nur wenn frei)" #VINCENT test
     ]
 
     action_map = {
