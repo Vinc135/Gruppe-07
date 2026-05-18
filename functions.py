@@ -104,7 +104,7 @@ def main_menu():
     ]
 
     action_map = {
-        0: (lambda stdscr: auto_hinzufuegen(stdscr), ActionType.MENU),
+        0: (lambda stdscr: auto_hinzufuegen(stdscr), ActionType.MENU), #LENNOX
         1: (lambda stdscr: autos_anzeigen(stdscr), ActionType.MENU),
         2: (lambda stdscr: freie_autos(stdscr), ActionType.MENU),
         3: (lambda stdscr: vergebene_autos(stdscr), ActionType.MENU),
@@ -167,9 +167,9 @@ def auto_detail_menu(stdscr, kennzeichen):
     menu_options = [
         "(0) BACK",
         "(1) Auto löschen",
-        "(2) Auto bearbeiten",
-        "(3) Freigeben (nur wenn vermietet)",
-        "(4) Blockieren (nur wenn frei)"
+        "(2) Auto bearbeiten", #LASSE
+        "(3) Freigeben (nur wenn vermietet)", #TONI
+        "(4) Vermieten (nur wenn frei)" #VINCENT
     ]
 
     action_map = {
