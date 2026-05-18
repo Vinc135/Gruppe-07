@@ -164,35 +164,69 @@ def auto_detail_menu(stdscr, kennzeichen):
     garage = Garage()
     auto = garage.auto_finden(kennzeichen)
 
-    menu_options = [
-        "(0) BACK",
-        "(1) Auto löschen",
-        "(2) Auto bearbeiten", #LASSE
-        "(3) Freigeben (nur wenn vermietet)", #TONI
-        "(4) Vermieten (nur wenn frei)" #VINCENT test
-    ]
-
+    menu_options = ["(0) BACK"]
     action_map = {
-        0: (lambda stdscr: autos_anzeigen(stdscr), ActionType.MENU),
-
-        1: (lambda stdscr: delete_and_refresh(stdscr, garage, kennzeichen), ActionType.ACTION),
-
-        2: (lambda stdscr: auto_bearbeiten(stdscr, kennzeichen), ActionType.MENU),
-
-        3: (
-            lambda stdscr: garage.zurueckgeben(kennzeichen)
-            if auto["verliehen"] else None,
-            ActionType.ACTION
-        ),
-
-        4: (
-            lambda stdscr: garage.verleihen(kennzeichen, 1)
-            if not auto["verliehen"] else None,
-            ActionType.ACTION
-        ),
+        0: (lambda stdscr: autos_anzeigen(stdscr), ActionType.MENU)
     }
 
+    i = 1
+
+    menu_options.append("(1) Auto löschen")
+    action_map[i] = (lambda stdscr: delete_and_refresh(stdscr, garage, kennzeichen), ActionType.ACTION)
+    i += 1
+
+    menu_options.append("(2) Auto bearbeiten")
+    action_map[i] = (lambda stdscr: auto_bearbeiten(stdscr, kennzeichen), ActionType.MENU)
+    i += 1
+
+    # nur wenn vermietet
+    if auto["verliehen"]:
+        menu_options.append(f"({i}) Freigeben")
+        action_map[i] = (
+            lambda stdscr: garage.zurueckgeben(kennzeichen),
+            ActionType.ACTION
+        )
+        i += 1
+
+    # nur wenn frei
+    if not auto["verliehen"]:
+        menu_options.append(f"({i}) Vermieten")
+        action_map[i] = (
+            lambda stdscr: vermieten_flow(stdscr, garage, kennzeichen),
+            ActionType.ACTION
+        )
+        i += 1
+
     return menu_options, action_map, f"Auto {kennzeichen}"
+
+def vermieten_flow(stdscr, garage, kennzeichen):
+    curses.echo()
+    stdscr.clear()
+
+    auto = garage.auto_finden(kennzeichen)
+
+    stdscr.addstr(0, 0, "Wie viele Tage vermieten?")
+    stdscr.refresh()
+    tage = int(stdscr.getstr(1, 0).decode().strip())
+
+    preis = int(auto["tagespreis"]) * tage
+
+    stdscr.addstr(3, 0, f"Endpreis: {preis}€")
+    stdscr.addstr(5, 0, "Bestätigen? (j/n): ")
+    stdscr.refresh()
+
+    confirm = stdscr.getstr(5, 20).decode().lower()
+
+    curses.noecho()
+
+    if confirm == "j":
+        garage.verleihen(kennzeichen, tage)
+        stdscr.addstr(7, 0, "Auto erfolgreich vermietet.")
+    else:
+        stdscr.addstr(7, 0, "Abgebrochen.")
+
+    stdscr.refresh()
+    stdscr.getch()
 
 def delete_and_refresh(stdscr, garage, kennzeichen):
     garage.auto_entfernen(kennzeichen)

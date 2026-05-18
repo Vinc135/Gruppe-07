@@ -71,3 +71,17 @@ class Garage:
                 umsatz += auto["tagespreis"] * tage
 
         return umsatz
+
+    def verleihen(self, kennzeichen, tage):
+        data = self._load()
+
+        auto = data.get(str(kennzeichen))
+        if not auto or auto["verliehen"]:
+            return False
+
+        auto["verliehen"] = True
+        auto["verliehen_bis"] = int(tage)
+
+        data[str(kennzeichen)] = auto
+        self._save(data)
+        return True
