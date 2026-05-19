@@ -6,6 +6,16 @@
         "kilometer": "205000",
         "verbrauch": "8,5",
         "tagespreis": "50",
+        "verliehen": true,
+        "verliehen_bis": 3
+    },
+    "A": {
+        "marke": "Keine Marke gesetzt",
+        "modell": "Kein Modell angegeben",
+        "baujahr": 0,
+        "kilometer": 0,
+        "verbrauch": 0.0,
+        "tagespreis": 0.0,
         "verliehen": false,
         "verliehen_bis": 0
     }
