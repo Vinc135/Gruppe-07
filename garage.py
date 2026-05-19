@@ -61,6 +61,17 @@ class Garage:
         data = self._load()
         return {k: v for k, v in data.items() if v["verliehen"]}
 
+    def zurueckgeben(self, kennzeichen):
+        data = self._load()
+        
+        if kennzeichen in data:
+            data[kennzeichen]["verliehen"] = False
+            data[kennzeichen]["verliehen_bis"] = 0
+            self._save(data)
+            return True
+        
+        return False
+
     def tagesumsatz_berechnen(self):
         data = self._load()
         umsatz = 0

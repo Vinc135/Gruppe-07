@@ -179,6 +179,15 @@ def auto_detail_menu(stdscr, kennzeichen):
     action_map[i] = (lambda stdscr: auto_bearbeiten(stdscr, kennzeichen), ActionType.MENU)
     i += 1
 
+        3: (
+            lambda stdscr: freigeben_screen(stdscr, kennzeichen)
+            if auto["verliehen"] else None,
+            ActionType.MENU
+        ),
+
+        4: (
+            lambda stdscr: garage.verleihen(kennzeichen, 1)
+            if not auto["verliehen"] else None,
     # nur wenn vermietet
     if auto["verliehen"]:
         menu_options.append(f"({i}) Freigeben")
@@ -198,6 +207,28 @@ def auto_detail_menu(stdscr, kennzeichen):
         i += 1
 
     return menu_options, action_map, f"Auto {kennzeichen}"
+
+def freigeben_screen(stdscr, kennzeichen):
+    curses.curs_set(0)
+    garage = Garage()
+    
+    # Auto freigeben und Daten laden
+    garage.zurueckgeben(kennzeichen)
+    auto = garage.auto_finden(kennzeichen)
+    autoname = f"{auto['marke']} {auto['modell']}"
+    
+    # Bestätigungsbildschirm anzeigen
+    while True:
+        stdscr.clear()
+        stdscr.addstr(0, 0, f"Das Auto {kennzeichen} {autoname} wurde freigegeben")
+        stdscr.addstr(2, 0, "Press the right arrow key to go back...")
+        
+        key = stdscr.getch()
+        
+        if key == curses.KEY_RIGHT:
+            return vergebene_autos(stdscr)
+        
+        stdscr.refresh()
 
 def vermieten_flow(stdscr, garage, kennzeichen):
     curses.echo()
