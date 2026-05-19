@@ -164,20 +164,20 @@ def auto_detail_menu(stdscr, kennzeichen):
     garage = Garage()
     auto = garage.auto_finden(kennzeichen)
 
-    menu_options = ["(0) BACK"]
+    menu_options = [
+        "(0) BACK",
+        "(1) Auto löschen",
+        "(2) Auto bearbeiten", #LASSE
+        "(3) Freigeben (nur wenn vermietet)", #TONI
+        "(4) Vermieten (nur wenn frei)" #VINCENT
+    ]
+
     action_map = {
-        0: (lambda stdscr: autos_anzeigen(stdscr), ActionType.MENU)
-    }
+        0: (lambda stdscr: autos_anzeigen(stdscr), ActionType.MENU),
 
-    i = 1
+        1: (lambda stdscr: delete_and_refresh(stdscr, garage, kennzeichen), ActionType.ACTION),
 
-    menu_options.append("(1) Auto löschen")
-    action_map[i] = (lambda stdscr: delete_and_refresh(stdscr, garage, kennzeichen), ActionType.ACTION)
-    i += 1
-
-    menu_options.append("(2) Auto bearbeiten")
-    action_map[i] = (lambda stdscr: auto_bearbeiten(stdscr, kennzeichen), ActionType.MENU)
-    i += 1
+        2: (lambda stdscr: auto_bearbeiten(stdscr, kennzeichen), ActionType.MENU),
 
         3: (
             lambda stdscr: freigeben_screen(stdscr, kennzeichen)
@@ -186,27 +186,14 @@ def auto_detail_menu(stdscr, kennzeichen):
         ),
 
         4: (
-            lambda stdscr: garage.verleihen(kennzeichen, 1)
+            lambda stdscr: vermieten_flow(stdscr, garage, kennzeichen)
             if not auto["verliehen"] else None,
-    # nur wenn vermietet
-    if auto["verliehen"]:
-        menu_options.append(f"({i}) Freigeben")
-        action_map[i] = (
-            lambda stdscr: garage.zurueckgeben(kennzeichen),
             ActionType.ACTION
-        )
-        i += 1
-
-    # nur wenn frei
-    if not auto["verliehen"]:
-        menu_options.append(f"({i}) Vermieten")
-        action_map[i] = (
-            lambda stdscr: vermieten_flow(stdscr, garage, kennzeichen),
-            ActionType.ACTION
-        )
-        i += 1
+        ),
+    }
 
     return menu_options, action_map, f"Auto {kennzeichen}"
+
 
 def freigeben_screen(stdscr, kennzeichen):
     curses.curs_set(0)
