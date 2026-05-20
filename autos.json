@@ -1,22 +1,32 @@
 {
+    "WR-VL-13": {
+        "marke": "BMW",
+        "modell": "118i F20",
+        "baujahr": 2015,
+        "kilometer": 82419,
+        "verbrauch": 6.7,
+        "tagespreis": 70.0,
+        "verliehen": false,
+        "verliehen_bis": 0
+    },
     "ROW-RS-100": {
         "marke": "BMW",
         "modell": "E46",
-        "baujahr": "2002",
-        "kilometer": "205000",
-        "verbrauch": "8,5",
-        "tagespreis": "50",
-        "verliehen": true,
-        "verliehen_bis": 3
-    },
-    "A": {
-        "marke": "Keine Marke gesetzt",
-        "modell": "Kein Modell angegeben",
-        "baujahr": 0,
-        "kilometer": 0,
-        "verbrauch": 0.0,
-        "tagespreis": 0.0,
+        "baujahr": 2002,
+        "kilometer": 205000,
+        "verbrauch": 8.5,
+        "tagespreis": 50.0,
         "verliehen": false,
         "verliehen_bis": 0
+    },
+    "PE-DL-12": {
+        "marke": "Audi",
+        "modell": "S5",
+        "baujahr": 2017,
+        "kilometer": 80573,
+        "verbrauch": 7.8,
+        "tagespreis": 199.0,
+        "verliehen": true,
+        "verliehen_bis": 3
     }
 }

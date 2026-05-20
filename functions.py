@@ -214,7 +214,7 @@ def freigeben_screen(stdscr, kennzeichen):
     while True:
         stdscr.clear()
         stdscr.addstr(0, 0, f"Das Auto {kennzeichen} {autoname} wurde freigegeben")
-        stdscr.addstr(2, 0, "Press the right arrow key to go back...")
+        stdscr.addstr(2, 0, "Auto erfolgreich freigegeben. Taste drücken")
         
         key = stdscr.getch()
         
@@ -305,3 +305,66 @@ def auto_hinzufuegen(stdscr):
     stdscr.getch() # wartet auf userinput
 
     return main_menu()
+
+# def auto_bearbeiten(stdscr, kennzeichen):
+#     curses.curs_set(1)
+#     stdscr.clear()
+
+#     garage = Garage()
+#     auto = garage.auto_finden(kennzeichen)
+
+#     fields = [
+#         ("marke", "Marke"),
+#         ("modell", "Modell"),
+#         ("baujahr", "Baujahr"),
+#         ("kilometer", "Kilometer"),
+#         ("verbrauch", "Verbrauch"),
+#         ("tagespreis", "Tagespreis"),
+#     ]
+
+#     updated_values = {}
+
+#     for i, (key, label) in enumerate(fields):
+#         current_value = str(auto.get(key, ""))
+
+#         stdscr.addstr(i, 0, f"{label} ({current_value}): ")
+#         stdscr.refresh()
+
+#         curses.echo()
+#         new_val = stdscr.getstr(i, len(label) + len(current_value) + 4).decode("utf-8").strip()
+#         curses.noecho()
+
+#         # Wenn leer -> alten Wert behalten
+#         if new_val == "":
+#             updated_values[key] = current_value
+#         else:
+#             updated_values[key] = new_val
+
+#     # Typen konvertieren
+#     updated_values["baujahr"] = int(updated_values["baujahr"])
+#     updated_values["kilometer"] = int(updated_values["kilometer"])
+#     updated_values["verbrauch"] = float(updated_values["verbrauch"].replace(",", "."))
+#     updated_values["tagespreis"] = float(updated_values["tagespreis"].replace(",", "."))
+
+#     # Neues Auto objekt erstellen (Kennzeichen bleibt gleich)
+#     neues_auto = Auto(
+#         kennzeichen,
+#         updated_values["marke"],
+#         updated_values["modell"],
+#         updated_values["baujahr"],
+#         updated_values["kilometer"],
+#         updated_values["verbrauch"],
+#         updated_values["tagespreis"],
+#         verliehen=auto["verliehen"],
+#         verliehen_bis=auto["verliehen_bis"],
+#     )
+
+#     # Update im Garage-System (ersetzen)
+#     garage.auto_entfernen(kennzeichen)
+#     garage.auto_hinzufügen(neues_auto)
+
+#     stdscr.addstr(len(fields) + 2, 0, "Auto erfolgreich bearbeitet. Taste drücken...")
+#     stdscr.refresh()
+#     stdscr.getch()
+
+#     return auto_detail_menu(stdscr, kennzeichen)
