@@ -1,6 +1,7 @@
 import curses
 from action_type_attribute import *
 from garage import Garage 
+from auto import Auto
 
 def draw_menu(stdscr):
 
@@ -177,7 +178,7 @@ def auto_detail_menu(stdscr, kennzeichen):
 
         1: (lambda stdscr: delete_and_refresh(stdscr, garage, kennzeichen), ActionType.ACTION),
 
-        2: (lambda stdscr: auto_bearbeiten(stdscr, kennzeichen), ActionType.MENU),
+        2: (lambda stdscr: list_auto_details_menu(stdscr, kennzeichen), ActionType.MENU),
 
         3: (
             lambda stdscr: garage.zurueckgeben(kennzeichen)
@@ -197,3 +198,111 @@ def auto_detail_menu(stdscr, kennzeichen):
 def delete_and_refresh(stdscr, garage, kennzeichen):
     garage.auto_entfernen(kennzeichen)
     autos_anzeigen(stdscr)
+
+
+def list_auto_details_menu(stdscr, kennzeichen):
+    curses.curs_set(0)
+    auto = Garage().auto_finden(kennzeichen)
+
+    menu_options = [
+        "(0) BACK",
+        "(1) # Kennzeichen: \t\t" + kennzeichen,
+        "(2) # Marke: \t\t\t" + auto["marke"],
+        "(3) # Modell: \t\t" + auto["modell"],
+        "(4) # Baujahr: \t\t" + auto["baujahr"],
+        "(5) # Verbrauch in Litern: \t" + auto["verbrauch"],
+        "(6) # Tagespreis in EUR: \t" + auto["tagespreis"],
+    ]
+
+    action_map = {
+        0: (lambda stdscr: auto_detail_menu(stdscr, kennzeichen), ActionType.MENU),
+        1: (lambda stdscr: edit_auto_detail(stdscr, "kennzeichen", kennzeichen, auto), ActionType.MENU),
+        2: (lambda stdscr: edit_auto_detail(stdscr, "marke", kennzeichen, auto), ActionType.MENU),
+        3: (lambda stdscr: edit_auto_detail(stdscr, "modell", kennzeichen, auto), ActionType.MENU),
+        4: (lambda stdscr: edit_auto_detail(stdscr, "baujahr", kennzeichen, auto), ActionType.MENU),
+        5: (lambda stdscr: edit_auto_detail(stdscr, "verbrauch", kennzeichen, auto), ActionType.MENU),
+        6: (lambda stdscr: edit_auto_detail(stdscr, "tagespreis", kennzeichen, auto), ActionType.MENU)
+    }
+
+    return menu_options, action_map, f"Auto {kennzeichen}"
+
+def edit_auto_detail(stdscr, filter, kennzeichen, auto):
+    aktueller_wert = "Error: Es wurde kein gültiges Attribut ausgewählt."
+
+    if filter == "kennzeichen":
+        aktueller_wert = kennzeichen
+    elif filter == "marke":
+        aktueller_wert = auto["marke"]
+    elif filter == "modell":
+        aktueller_wert = auto["modell"]
+    elif filter == "baujahr":
+        aktueller_wert = auto["baujahr"]
+    elif filter == "verbrauch":
+        aktueller_wert = auto["verbrauch"]
+    elif filter == "tagespreis":
+        aktueller_wert = auto["tagespreis"]
+
+
+    stdscr.clear()
+    stdscr.addstr(0, 0, f"Bitte wählen Sie einen neuen Wert für {filter}:")
+    stdscr.addstr(2, 0, f"Aktueller Wert: {aktueller_wert}")
+    stdscr.addstr(4, 0, f"Neuer Wert: ")
+    stdscr.refresh()
+    
+
+    
+    return list_auto_details_menu(stdscr, auto)
+
+
+
+#age: int = 1
+#name: str = "123"
+#print(age)
+#print(name)
+#print(f"asdasd {age}, asd a {name}")
+
+#def addFunction(a: float, b: float = 1) -> float: #default
+##    return a+b
+
+#print(addFunction(12,3))
+
+#for i in range(3): 
+#    print("a")
+
+#for name in names:
+ #   print
+
+#i: int = 0
+#while i<3:
+#    i+= 1
+
+#if age == 3:
+#    print()
+#elif age == 2:
+#    print()
+#else:
+#    print()
+
+#text: str = input("LOS: ")
+#print(text)
+
+#try:
+#    print()
+#except KeyError as e:
+#    print("Sorry")
+#except TypeError as e:
+#    print("asdasdsa")
+
+#math.srqt aber erst import 
+
+#data = json.loads(jsonstring)
+#print(data['students'][0])
+#data["test"] = True
+
+#new_json = json.dumps(data)
+
+#with open("autos.json", "w") as f:
+ #
+ #    data = json.load(f)
+
+#print(data.items())
