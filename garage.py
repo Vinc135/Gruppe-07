@@ -50,34 +50,13 @@ class Garage:
         data = self._load()
         return data.get(str(kennzeichen))
     
-    def auto_update(self, old_kennzeichen, auto) -> bool:
+    def auto_update(self, kennzeichen, auto) -> bool:
         data = self._load()
         
-        if old_kennzeichen not in data:
+        if kennzeichen not in data:
             return False
         
-        new_kennzeichen = auto["kennzeichen"]
-        
-        # Wenn das Kennzeichen geändert wurde
-        if old_kennzeichen != new_kennzeichen:
-            # Prüfe ob neues Kennzeichen bereits existiert
-            if new_kennzeichen in data:
-                return False
-            
-            # Lösche alten Eintrag
-            del data[old_kennzeichen]
-        
-        # Erstelle neuen Eintrag (oder aktualisiere bestehenden)
-        data[new_kennzeichen] = {
-            "marke": auto["marke"],
-            "modell": auto["modell"],
-            "baujahr": auto["baujahr"],
-            "kilometer": auto["kilometer"],
-            "verbrauch": auto["verbrauch"],
-            "tagespreis": auto["tagespreis"],
-            "verliehen": auto.get("verliehen", False),
-            "verliehen_bis": auto.get("verliehen_bis", 0)
-        }
+        data[kennzeichen] = auto
 
         self._save(data)
         return True

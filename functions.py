@@ -210,9 +210,9 @@ def list_auto_details_menu(stdscr, kennzeichen):
         "(1) # Kennzeichen: \t\t" + kennzeichen,
         "(2) # Marke: \t\t\t" + auto["marke"],
         "(3) # Modell: \t\t" + auto["modell"],
-        "(4) # Baujahr: \t\t" + auto["baujahr"],
-        "(5) # Verbrauch in Litern: \t" + auto["verbrauch"],
-        "(6) # Tagespreis in EUR: \t" + auto["tagespreis"],
+        "(4) # Baujahr: \t\t" + str(auto["baujahr"]),
+        "(5) # Verbrauch in Litern: \t" + str(auto["verbrauch"]),
+        "(6) # Tagespreis in EUR: \t" + str(auto["tagespreis"]),
     ]
 
     action_map = {
@@ -228,6 +228,7 @@ def list_auto_details_menu(stdscr, kennzeichen):
     return menu_options, action_map, f"Auto {kennzeichen}"
 
 def edit_auto_detail(stdscr, filter, kennzeichen, auto):
+    auto = Garage().auto_finden(kennzeichen)
     aktueller_wert = ""
 
     if filter == "kennzeichen":
@@ -252,8 +253,10 @@ def edit_auto_detail(stdscr, filter, kennzeichen, auto):
     stdscr.addstr(0, 0, f"Bitte wählen Sie einen neuen Wert für {filter}:")
     stdscr.addstr(2, 0, f"Aktueller Wert: {aktueller_wert}")
     stdscr.addstr(4, 0, "Neuer Wert: ")
+    curses.curs_set(1)
     curses.echo()
-    neuer_wert = stdscr.getstr(4, 12, 20).strip()
+    neuer_wert = stdscr.getstr(4, 12, 20).decode("utf-8").strip()
+    curses.curs_set(0)
     curses.noecho()
 
     if neuer_wert == "":
@@ -285,7 +288,7 @@ def edit_auto_detail(stdscr, filter, kennzeichen, auto):
     elif filter == "baujahr":
 
         neuer_wert = int(neuer_wert)
-        if neuer_wert is None or auto is None or not neuer_wert > datetime.date.today().year or neuer_wert < 1500:
+        if neuer_wert is None or auto is None or neuer_wert > datetime.date.today().year or neuer_wert < 1500:
             isValid = False        
         auto["baujahr"] = neuer_wert 
 
@@ -294,7 +297,7 @@ def edit_auto_detail(stdscr, filter, kennzeichen, auto):
         neuer_wert = float(neuer_wert.replace(",", "."))
         if neuer_wert is None or auto is None or neuer_wert < 0:
             isValid = False        
-        auto["kilometer"] = neuer_wert 
+        auto["verbrauch"] = neuer_wert 
 
     elif filter == "tagespreis":
         
@@ -312,7 +315,8 @@ def edit_auto_detail(stdscr, filter, kennzeichen, auto):
 
     ###############################################################
     # JSON updaten
-
+    garage = Garage()
+    garage.auto_update(kennzeichen, auto)
 
     if filter == "kennzeichen":
         return list_auto_details_menu(stdscr, neuer_wert)

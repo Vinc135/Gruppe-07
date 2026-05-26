@@ -5,7 +5,7 @@ from auto import Auto
 from garage import Garage
 
 def main():
-    auto = Auto("ROW-RS-100", "BMW", "E46", "2002", "205000", "8,5", "50")
+    auto = Auto("ROW-RS-100", "BMW", "E46", 2002, 205000, 8.5, 50.0)
     garage = Garage()
     garage.auto_hinzufügen(auto)
     print("Hello World!")
