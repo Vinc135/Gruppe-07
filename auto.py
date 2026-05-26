@@ -1,5 +1,7 @@
 import json
 import os
+import datetime
+
 
 class Auto:
     FILE = "autos.json"
@@ -30,6 +32,84 @@ class Auto:
     def _refresh(self):
         data = self._load()
         return data.get(self.kennzeichen)
+    
+    def set_marke(self, marke):
+        data = self._load()
+        auto = data.get(self.kennzeichen)
+        
+        if marke is None or auto is None or marke.strip() == "":
+            return False
+        
+        auto["marke"] = marke        
+        data[self.kennzeichen] = auto
+
+        self._save(data)
+        return True
+    
+    def set_modell(self, modell):
+        data = self._load()
+        auto = data.get(self.kennzeichen)
+        
+        if modell is None or auto is None or modell.strip() == "":
+            return False
+        
+        auto["modell"] = modell        
+        data[self.kennzeichen] = auto
+
+        self._save(data)
+        return True
+    
+    def set_baujahr(self, baujahr):
+        data = self._load()
+        auto = data.get(self.kennzeichen)
+        
+        if baujahr is None or auto is None or not baujahr > datetime.date.today().year or baujahr < 1500:
+            return False
+        
+        auto["baujahr"] = baujahr       
+        data[self.kennzeichen] = auto
+
+        self._save(data)
+        return True
+    
+    def set_kilometer(self, kilometer):
+        data = self._load()
+        auto = data.get(self.kennzeichen)
+        
+        if kilometer is None or auto is None or kilometer < 0:
+            return False
+        
+        auto["kilometer"] = kilometer       
+        data[self.kennzeichen] = auto
+
+        self._save(data)
+        return True
+    
+    def set_verbrauch(self, verbrauch):
+        data = self._load()
+        auto = data.get(self.kennzeichen)
+        
+        if verbrauch is None or auto is None or verbrauch < 0:
+            return False
+        
+        auto["verbrauch"] = verbrauch       
+        data[self.kennzeichen] = auto
+
+        self._save(data)
+        return True
+    
+    def set_tagespreis(self, tagespreis):
+        data = self._load()
+        auto = data.get(self.kennzeichen)
+        
+        if tagespreis is None or auto is None or tagespreis < 0:
+            return False
+        
+        auto["tagespreis"] = tagespreis       
+        data[self.kennzeichen] = auto
+
+        self._save(data)
+        return True
 
     def verleihen(self, tage):
         data = self._load()

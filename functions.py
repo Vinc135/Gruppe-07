@@ -227,7 +227,7 @@ def list_auto_details_menu(stdscr, kennzeichen):
     return menu_options, action_map, f"Auto {kennzeichen}"
 
 def edit_auto_detail(stdscr, filter, kennzeichen, auto):
-    aktueller_wert = "Error: Es wurde kein gültiges Attribut ausgewählt."
+    aktueller_wert = ""
 
     if filter == "kennzeichen":
         aktueller_wert = kennzeichen
@@ -241,68 +241,44 @@ def edit_auto_detail(stdscr, filter, kennzeichen, auto):
         aktueller_wert = auto["verbrauch"]
     elif filter == "tagespreis":
         aktueller_wert = auto["tagespreis"]
-
+    else:
+        stdscr.clear()
+        stdscr.addstr(4, 0, "Error: Es konnte kein gültiges Attribut gefunden werden.")
+        curses.napms(2000)
+        return list_auto_details_menu(stdscr, kennzeichen)
 
     stdscr.clear()
     stdscr.addstr(0, 0, f"Bitte wählen Sie einen neuen Wert für {filter}:")
     stdscr.addstr(2, 0, f"Aktueller Wert: {aktueller_wert}")
-    stdscr.addstr(4, 0, f"Neuer Wert: ")
-    stdscr.refresh()
-    
+    stdscr.addstr(4, 0, "Neuer Wert: ")
+    curses.echo()
+    neuer_wert = stdscr.getstr(4, 12, 20).strip()
+    curses.noecho()
 
-    
-    return list_auto_details_menu(stdscr, auto)
+    if neuer_wert == "":
+        stdscr.addstr(6, 0, "Fehler: Es wurde kein neuer Wert eingegeben.")
+        stdscr.refresh()
+        curses.napms(2000)
+        return list_auto_details_menu(stdscr, kennzeichen)
 
+    isValid = False
+    if filter == "kennzeichen":
+        # altes auto löschen, neues mit aktualisiertem kennzeichen hinzufügen
+        print("Altes Kennzeichen: " + kennzeichen)
+    elif filter == "marke":
+        isValid =auto.set_marke(neuer_wert)
+    elif filter == "modell":
+        isValid = auto.set_modell(neuer_wert)
+    elif filter == "baujahr":
+        isValid = auto.set_baujahr(int(neuer_wert))
+    elif filter == "verbrauch":
+        isValid = auto.set_verbrauch(float(neuer_wert.replace(",", ".")))
+    elif filter == "tagespreis":
+        isValid = auto.set_tagespreis(float(neuer_wert.replace(",", ".")))
 
+    ###############################################################
 
-#age: int = 1
-#name: str = "123"
-#print(age)
-#print(name)
-#print(f"asdasd {age}, asd a {name}")
+    if filter == "kennzeichen":
+        return list_auto_details_menu(stdscr, neuer_wert)
 
-#def addFunction(a: float, b: float = 1) -> float: #default
-##    return a+b
-
-#print(addFunction(12,3))
-
-#for i in range(3): 
-#    print("a")
-
-#for name in names:
- #   print
-
-#i: int = 0
-#while i<3:
-#    i+= 1
-
-#if age == 3:
-#    print()
-#elif age == 2:
-#    print()
-#else:
-#    print()
-
-#text: str = input("LOS: ")
-#print(text)
-
-#try:
-#    print()
-#except KeyError as e:
-#    print("Sorry")
-#except TypeError as e:
-#    print("asdasdsa")
-
-#math.srqt aber erst import 
-
-#data = json.loads(jsonstring)
-#print(data['students'][0])
-#data["test"] = True
-
-#new_json = json.dumps(data)
-
-#with open("autos.json", "w") as f:
- #
- #    data = json.load(f)
-
-#print(data.items())
+    return list_auto_details_menu(stdscr, kennzeichen)

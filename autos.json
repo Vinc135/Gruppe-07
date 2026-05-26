@@ -2,10 +2,10 @@
     "ROW-RS-100": {
         "marke": "BMW",
         "modell": "E46",
-        "baujahr": "2002",
-        "kilometer": "205000",
-        "verbrauch": "8,5",
-        "tagespreis": "50",
+        "baujahr": 2002,
+        "kilometer": 205000,
+        "verbrauch": 8.5,
+        "tagespreis": 50.0,
         "verliehen": false,
         "verliehen_bis": 0
     }
