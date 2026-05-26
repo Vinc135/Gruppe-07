@@ -2,6 +2,7 @@ import curses
 from action_type_attribute import *
 from garage import Garage 
 from auto import Auto
+import datetime
 
 def draw_menu(stdscr):
 
@@ -261,22 +262,57 @@ def edit_auto_detail(stdscr, filter, kennzeichen, auto):
         curses.napms(2000)
         return list_auto_details_menu(stdscr, kennzeichen)
 
-    isValid = False
+    isValid = True
     if filter == "kennzeichen":
+        
+        neuer_wert = neuer_wert.strip().upper()
+
         # altes auto löschen, neues mit aktualisiertem kennzeichen hinzufügen
-        print("Altes Kennzeichen: " + kennzeichen)
+        ####################
+
     elif filter == "marke":
-        isValid =auto.set_marke(neuer_wert)
+        
+        if neuer_wert is None or auto is None or neuer_wert.strip() == "":
+            isValid = False        
+        auto["marke"] = neuer_wert
+
     elif filter == "modell":
-        isValid = auto.set_modell(neuer_wert)
+        
+        if neuer_wert is None or auto is None or neuer_wert.strip() == "":
+            isValid = False        
+        auto["modell"] = neuer_wert
+
     elif filter == "baujahr":
-        isValid = auto.set_baujahr(int(neuer_wert))
+
+        neuer_wert = int(neuer_wert)
+        if neuer_wert is None or auto is None or not neuer_wert > datetime.date.today().year or neuer_wert < 1500:
+            isValid = False        
+        auto["baujahr"] = neuer_wert 
+
     elif filter == "verbrauch":
-        isValid = auto.set_verbrauch(float(neuer_wert.replace(",", ".")))
+
+        neuer_wert = float(neuer_wert.replace(",", "."))
+        if neuer_wert is None or auto is None or neuer_wert < 0:
+            isValid = False        
+        auto["kilometer"] = neuer_wert 
+
     elif filter == "tagespreis":
-        isValid = auto.set_tagespreis(float(neuer_wert.replace(",", ".")))
+        
+        neuer_wert = float(neuer_wert.replace(",", "."))
+        if neuer_wert is None or auto is None or neuer_wert < 0:
+            isValid = False        
+        auto["tagespreis"] = neuer_wert
+
+    
+    if isValid == False:
+        stdscr.addstr(6, 0, "Fehler: Es wurde kein gültiger Wert eingegeben.")
+        stdscr.refresh()
+        curses.napms(2000)
+        return list_auto_details_menu(stdscr, kennzeichen)
 
     ###############################################################
+    # JSON updaten
+
 
     if filter == "kennzeichen":
         return list_auto_details_menu(stdscr, neuer_wert)
