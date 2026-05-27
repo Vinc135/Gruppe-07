@@ -46,12 +46,11 @@ def auto_bearbeiten(stdscr, filter, kennzeichen, auto):
         curses.napms(2000)
         return functions.auto_detail_menu(stdscr, kennzeichen)
 
-    isValid = True
+    error_message = ""
     # Wenn des Kennzeichen geändert wird, muss das Auto gelöscht und mit neuem Kennzeichen wieder hinzugefügt werden, da das Kennzeichen der Key in unserem Dictionary ist
     if filter == "kennzeichen":
         
         neuer_wert = neuer_wert.strip().upper()
-
         neuesauto = Auto(
             neuer_wert,
             auto["marke"],
@@ -63,7 +62,6 @@ def auto_bearbeiten(stdscr, filter, kennzeichen, auto):
             auto["verliehen"],
             auto["verliehen_bis"],
         )
-
         garage = Garage()
         garage.auto_hinzufügen(neuesauto)
         garage.auto_entfernen(kennzeichen)
@@ -71,42 +69,52 @@ def auto_bearbeiten(stdscr, filter, kennzeichen, auto):
     # Sonst normale Änderung des Attributs im Auto Dictionary
     elif filter == "marke":
         
-        if neuer_wert is None or auto is None or neuer_wert.strip() == "":
-            isValid = False        
+        if neuer_wert is None or auto is None or neuer_wert.strip() == "":   
+            error_message = "Bitte geben Sie einen gültigen Text ein."
         auto["marke"] = neuer_wert
 
     elif filter == "modell":
         
         if neuer_wert is None or auto is None or neuer_wert.strip() == "":
-            isValid = False        
+            error_message = "Bitte geben Sie einen gültigen Text ein."
         auto["modell"] = neuer_wert
 
     elif filter == "baujahr":
 
-        neuer_wert = int(neuer_wert)
-        if neuer_wert is None or auto is None or neuer_wert > datetime.date.today().year or neuer_wert < 1500:
-            isValid = False        
-        auto["baujahr"] = neuer_wert 
+        try: 
+            neuer_wert = int(neuer_wert)
+            if neuer_wert is None or auto is None or neuer_wert > datetime.date.today().year or neuer_wert < 1500:
+                error_message = "Bitte geben Sie ein Jahr zwischen 1500 und Heute ein."               
+            auto["baujahr"] = neuer_wert 
+        except ValueError:
+            error_message = "Bitte geben Sie ein Jahr zwischen 1500 und Heute ein."
+        
 
     elif filter == "verbrauch":
 
-        neuer_wert = float(neuer_wert.replace(",", "."))
-        if neuer_wert is None or auto is None or neuer_wert < 0:
-            isValid = False        
-        auto["verbrauch"] = neuer_wert 
+        try:
+            neuer_wert = float(neuer_wert.replace(",", "."))
+            if neuer_wert is None or auto is None or neuer_wert < 0:
+                error_message = "Bitte geben Sie einen gültigen Gleitkommawert über 0 ein."    
+            auto["verbrauch"] = neuer_wert        
+        except ValueError:
+            error_message = "Bitte geben Sie einen gültigen Gleitkommawert über 0 ein."
 
     elif filter == "tagespreis":
         
-        neuer_wert = float(neuer_wert.replace(",", "."))
-        if neuer_wert is None or auto is None or neuer_wert < 0:
-            isValid = False        
-        auto["tagespreis"] = neuer_wert
+        try:
+            neuer_wert = float(neuer_wert.replace(",", "."))
+            if neuer_wert is None or auto is None or neuer_wert < 0: 
+                error_message = "Bitte geben Sie einen gültigen Gleitkommawert über 0 ein."
+            auto["tagespreis"] = neuer_wert
+        except ValueError:
+            error_message = "Bitte geben Sie einen gültigen Gleitkommawert über 0 ein."
 
     # Fehlerbehandlung für fehlgeschlagene Validierung des neuen Werts
-    if isValid == False:
-        stdscr.addstr(6, 0, "Fehler: Es wurde kein gültiger Wert eingegeben.")
+    if error_message != "":
+        stdscr.addstr(6, 0, f"Fehler: {error_message}")
         stdscr.refresh()
-        curses.napms(2000)
+        curses.napms(3000)
         return functions.auto_detail_menu(stdscr, kennzeichen)
 
     garage = Garage()

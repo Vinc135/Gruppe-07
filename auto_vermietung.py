@@ -1,29 +1,61 @@
 import curses
-from functions import *
+import functions
 from garage import Garage
+from auto import *
 
 # Funktion um ein Auto freizugeben wenn es bereits vermietet ist
 def freigeben_screen(stdscr, kennzeichen):
-    curses.curs_set(0)
+    curses.curs_set(1)
+    curses.echo()
+
     garage = Garage()
-    
-    # Auto freigeben und Daten laden
-    garage.zurueckgeben(kennzeichen)
-    auto = garage.auto_finden(kennzeichen)
+
+    # Auto laden
+    auto: Auto = garage.auto_finden(kennzeichen)
     autoname = f"{auto['marke']} {auto['modell']}"
-    
+
+    # Kilometer abfragen
+    stdscr.clear()
+    stdscr.addstr(0, 0, f"Wie viele Kilometer wurden mit {kennzeichen} gefahren?")
+    stdscr.refresh()
+
+    gefahrene_km = int(stdscr.getstr(1, 0).decode().strip())
+
+    # Kilometer addieren
+    garage.fahrt_hinzufügen(kennzeichen, gefahrene_km)
+
+    # Auto zurückgeben
+    garage.zurueckgeben(kennzeichen)
+
+    curses.noecho()
+    curses.curs_set(0)
+
     # Bestätigungsbildschirm anzeigen
     while True:
         stdscr.clear()
-        stdscr.addstr(0, 0, f"Das Auto {kennzeichen} {autoname} wurde freigegeben")
-        stdscr.addstr(2, 0, "Auto erfolgreich freigegeben. Taste drücken")
-        
+        stdscr.addstr(
+            0,
+            0,
+            f"Das Auto {kennzeichen} {autoname} wurde freigegeben"
+        )
+
+        stdscr.addstr(
+            2,
+            0,
+            f"{gefahrene_km} km wurden hinzugefügt."
+        )
+
+        stdscr.addstr(4, 0, "Auto erfolgreich freigegeben. Taste drücken")
+
         key = stdscr.getch()
-        
+
         if key == curses.KEY_RIGHT:
-            return vergebene_autos(stdscr)
-        
+            return functions.vergebene_autos(stdscr)
+
         stdscr.refresh()
+        stdscr.clear()
+        # Nach dem Hinzufügen zum Menü zurückkehren
+        return functions.auto_options_menu(stdscr, kennzeichen)
 
 # Funktion kümmert sich um das Vermieten eines Autos bei dem der Nutzer die Details dazu in der Konsole angibt
 def vermieten_flow(stdscr, garage, kennzeichen):
@@ -53,4 +85,6 @@ def vermieten_flow(stdscr, garage, kennzeichen):
         stdscr.addstr(7, 0, "Abgebrochen.")
 
     stdscr.refresh()
-    stdscr.getch()
+    stdscr.clear()
+    # Nach dem Hinzufügen zum Menü zurückkehren
+    return functions.auto_options_menu(stdscr, kennzeichen)
