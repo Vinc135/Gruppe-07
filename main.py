@@ -1,5 +1,4 @@
 import curses
-
 from functions import draw_menu
 from auto import Auto
 from garage import Garage

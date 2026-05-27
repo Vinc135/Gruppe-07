@@ -141,7 +141,6 @@ def auto_liste_menu(stdscr, filter_type, title):
 
     i = 1
     for kennzeichen, daten in autos.items():
-
         if filter_type == "frei" and daten["verliehen"]:
             continue
         if filter_type == "verliehen" and not daten["verliehen"]:
@@ -171,13 +170,21 @@ def auto_detail_menu(stdscr, kennzeichen):
         0: (lambda stdscr: autos_anzeigen(stdscr), ActionType.MENU)
     }
 
-        1: (lambda stdscr: delete_and_refresh(stdscr, garage, kennzeichen), ActionType.ACTION),
+    i = 1
 
-        2: (lambda stdscr: list_auto_details_menu(stdscr, kennzeichen), ActionType.MENU),
+    menu_options.append("(1) Auto löschen")
+    action_map[i] = (lambda stdscr: delete_and_refresh(stdscr, garage, kennzeichen), ActionType.ACTION)
+    i += 1
 
-        3: (
-            lambda stdscr: garage.zurueckgeben(kennzeichen)
-            if auto["verliehen"] else None,
+    menu_options.append("(2) Auto bearbeiten")
+    action_map[i] = (lambda stdscr: auto_bearbeiten(stdscr, kennzeichen), ActionType.MENU)
+    i += 1
+
+    # nur wenn vermietet
+    if auto["verliehen"]:
+        menu_options.append(f"({i}) Freigeben")
+        action_map[i] = (
+            lambda stdscr: freigeben_screen(stdscr, kennzeichen),
             ActionType.ACTION
         )
         i += 1
@@ -266,17 +273,17 @@ def list_auto_details_menu(stdscr, kennzeichen):
 
     action_map = {
         0: (lambda stdscr: auto_detail_menu(stdscr, kennzeichen), ActionType.MENU),
-        1: (lambda stdscr: edit_auto_detail(stdscr, "kennzeichen", kennzeichen, auto), ActionType.MENU),
-        2: (lambda stdscr: edit_auto_detail(stdscr, "marke", kennzeichen, auto), ActionType.MENU),
-        3: (lambda stdscr: edit_auto_detail(stdscr, "modell", kennzeichen, auto), ActionType.MENU),
-        4: (lambda stdscr: edit_auto_detail(stdscr, "baujahr", kennzeichen, auto), ActionType.MENU),
-        5: (lambda stdscr: edit_auto_detail(stdscr, "verbrauch", kennzeichen, auto), ActionType.MENU),
-        6: (lambda stdscr: edit_auto_detail(stdscr, "tagespreis", kennzeichen, auto), ActionType.MENU)
+        1: (lambda stdscr: auto_bearbeiten(stdscr, "kennzeichen", kennzeichen, auto), ActionType.MENU),
+        2: (lambda stdscr: auto_bearbeiten(stdscr, "marke", kennzeichen, auto), ActionType.MENU),
+        3: (lambda stdscr: auto_bearbeiten(stdscr, "modell", kennzeichen, auto), ActionType.MENU),
+        4: (lambda stdscr: auto_bearbeiten(stdscr, "baujahr", kennzeichen, auto), ActionType.MENU),
+        5: (lambda stdscr: auto_bearbeiten(stdscr, "verbrauch", kennzeichen, auto), ActionType.MENU),
+        6: (lambda stdscr: auto_bearbeiten(stdscr, "tagespreis", kennzeichen, auto), ActionType.MENU)
     }
 
     return menu_options, action_map, f"Auto {kennzeichen}"
 
-def edit_auto_detail(stdscr, filter, kennzeichen, auto):
+def auto_bearbeiten(stdscr, filter, kennzeichen, auto):
     auto = Garage().auto_finden(kennzeichen)
     aktueller_wert = ""
 
@@ -371,3 +378,53 @@ def edit_auto_detail(stdscr, filter, kennzeichen, auto):
         return list_auto_details_menu(stdscr, neuer_wert)
 
     return list_auto_details_menu(stdscr, kennzeichen)
+
+
+def auto_hinzufuegen(stdscr):
+    curses.curs_set(1) # setzt curser auf sichtbar
+    stdscr.clear()
+
+    fields = [
+        ("kennzeichen", "Kennzeichen"),
+        ("marke", "Marke"),
+        ("modell", "Modell"),
+        ("baujahr", "Baujahr"),
+        ("kilometer", "Kilometer"),
+        ("verbrauch", "Verbrauch"),
+        ("tagespreis", "Tagespreis"),
+    ]
+
+    inputs = {}
+    for i, (key, label) in enumerate(fields): # imput für jede mögliche eingabe eines elements aus fileds
+        stdscr.addstr(i, 0, f"{label}: ") # neue zeile für input unter dem letzten
+        stdscr.refresh()
+        curses.echo() # macht eingabe sichtbar
+        val = stdscr.getstr(i, len(label) + 2).decode("utf-8") # liest eingabe ein an stelle i der konsole nach dem label +2 für ": "
+        curses.noecho() # macht eingabe unsichtbar
+        inputs[key] = val # setzt value
+
+    baujahr = int(inputs.get("baujahr") or 0)
+    kilometer = int(inputs.get("kilometer") or 0)
+    verbrauch = float(inputs.get("verbrauch") or 0)
+    tagespreis = float(inputs.get("tagespreis") or 0)
+
+    auto = Auto(
+        inputs.get("kennzeichen") or "Kein Kennzeichen angegeben",
+        inputs.get("marke") or "Keine Marke gesetzt",
+        inputs.get("modell") or "Kein Modell angegeben",
+        baujahr,
+        kilometer,
+        verbrauch,
+        tagespreis,
+        verliehen=False,
+        verliehen_bis=0,
+    )
+
+    garage = Garage()
+    garage.auto_hinzufügen(auto)
+
+    stdscr.addstr(len(fields) + 1, 0, "Auto erfolgreich hinzugefügt. Drücke eine Taste, um zurückzugehen.")
+    stdscr.refresh()
+    stdscr.getch() # wartet auf userinput
+
+    return main_menu()
