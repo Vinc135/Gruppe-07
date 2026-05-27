@@ -1,5 +1,4 @@
 import curses
-from action_type_attribute import *
 from auto_vermietung import *
 from garage import Garage 
 from auto_hinzufuegen import auto_hinzufuegen
@@ -62,17 +61,8 @@ def handle_user_input(
         elif key == curses.KEY_RIGHT:  # If the RIGHT arrow key is pressed
             if current_row in action_map:
 
-                entry = action_map[current_row]
-
-                if entry[1] == ActionType.ACTION:
-                    entry[0](stdscr)
-                    continue
-                elif entry[1] == ActionType.ACTION_RETURN:
-                    entry[0](stdscr)
-                    return menu_options, action_map, title
-                else:
-                    a, b, c = entry[0](stdscr)
-                    return a, b, c
+                a, b, c = action_map[current_row](stdscr)
+                return a, b, c
         else:
             try:
                 number = int(key) - 48  # Convert the key to a number by subtracting ASCII value of '0'
@@ -108,11 +98,11 @@ def main_menu():
     ]
 
     action_map = {
-        0: (lambda stdscr: auto_hinzufuegen(stdscr), ActionType.MENU),
-        1: (lambda stdscr: autos_anzeigen(stdscr), ActionType.MENU),
-        2: (lambda stdscr: freie_autos(stdscr), ActionType.MENU),
-        3: (lambda stdscr: vergebene_autos(stdscr), ActionType.MENU),
-        4: (lambda stdscr: umsatz(stdscr), ActionType.MENU)
+        0: lambda stdscr: auto_hinzufuegen(stdscr),
+        1: lambda stdscr: autos_anzeigen(stdscr),
+        2: lambda stdscr: freie_autos(stdscr),
+        3: lambda stdscr: vergebene_autos(stdscr),
+        4: lambda stdscr: umsatz(stdscr)
     }
 
     return menu_options, action_map, "Hauptmenü"
@@ -136,7 +126,7 @@ def auto_liste_menu(stdscr, filter_type, title):
     menu_options = ["(0) ZURÜCK"]
 
     action_map = {
-        0: (lambda stdscr: main_menu(), ActionType.MENU)
+        0: lambda stdscr: main_menu()
     }
 
     garage = Garage()
@@ -153,10 +143,7 @@ def auto_liste_menu(stdscr, filter_type, title):
             f"({i}) {kennzeichen} | {daten['marke']} | {daten['tagespreis']}€/Tag"
         )
 
-        action_map[i] = (
-            lambda stdscr, k=kennzeichen: auto_options_menu(stdscr, k),
-            ActionType.MENU
-        )
+        action_map[i] = lambda stdscr, k=kennzeichen: auto_options_menu(stdscr, k)
 
         i += 1
 
@@ -172,35 +159,29 @@ def auto_options_menu(stdscr, kennzeichen):
 
     menu_options = ["(0) ZURÜCK"]
     action_map = {
-        0: (lambda stdscr: autos_anzeigen(stdscr), ActionType.MENU)
+        0: lambda stdscr: autos_anzeigen(stdscr)
     }
 
     i = 1
 
     menu_options.append("(1) Auto löschen")
-    action_map[i] = (lambda stdscr: delete_and_refresh(stdscr, garage, kennzeichen), ActionType.MENU)
+    action_map[i] = lambda stdscr: delete_and_refresh(stdscr, garage, kennzeichen)
     i += 1
 
     menu_options.append("(2) Auto bearbeiten")
-    action_map[i] = (lambda stdscr: auto_detail_menu(stdscr, kennzeichen), ActionType.MENU)
+    action_map[i] = lambda stdscr: auto_detail_menu(stdscr, kennzeichen)
     i += 1
 
     # nur wenn vermietet
     if auto["verliehen"]:
         menu_options.append(f"({i}) Freigeben")
-        action_map[i] = (
-            lambda stdscr: freigeben_screen(stdscr, kennzeichen),
-            ActionType.MENU
-        )
+        action_map[i] = lambda stdscr: freigeben_screen(stdscr, kennzeichen)
         i += 1
 
     # nur wenn frei
     if not auto["verliehen"]:
         menu_options.append(f"({i}) Vermieten")
-        action_map[i] = (
-            lambda stdscr: vermieten_flow(stdscr, garage, kennzeichen),
-            ActionType.MENU
-        )
+        action_map[i] = lambda stdscr: vermieten_flow(stdscr, garage, kennzeichen)
         i += 1
 
     return menu_options, action_map, f"Auto {kennzeichen}"
@@ -229,13 +210,13 @@ def auto_detail_menu(stdscr, kennzeichen):
     ]
 
     action_map = {
-        0: (lambda stdscr: auto_options_menu(stdscr, kennzeichen), ActionType.MENU),
-        1: (lambda stdscr: auto_bearbeiten(stdscr, "kennzeichen", kennzeichen, auto), ActionType.MENU),
-        2: (lambda stdscr: auto_bearbeiten(stdscr, "marke", kennzeichen, auto), ActionType.MENU),
-        3: (lambda stdscr: auto_bearbeiten(stdscr, "modell", kennzeichen, auto), ActionType.MENU),
-        4: (lambda stdscr: auto_bearbeiten(stdscr, "baujahr", kennzeichen, auto), ActionType.MENU),
-        5: (lambda stdscr: auto_bearbeiten(stdscr, "verbrauch", kennzeichen, auto), ActionType.MENU),
-        6: (lambda stdscr: auto_bearbeiten(stdscr, "tagespreis", kennzeichen, auto), ActionType.MENU)
+        0: lambda stdscr: auto_options_menu(stdscr, kennzeichen),
+        1: lambda stdscr: auto_bearbeiten(stdscr, "kennzeichen", kennzeichen, auto),
+        2: lambda stdscr: auto_bearbeiten(stdscr, "marke", kennzeichen, auto),
+        3: lambda stdscr: auto_bearbeiten(stdscr, "modell", kennzeichen, auto),
+        4: lambda stdscr: auto_bearbeiten(stdscr, "baujahr", kennzeichen, auto),
+        5: lambda stdscr: auto_bearbeiten(stdscr, "verbrauch", kennzeichen, auto),
+        6: lambda stdscr: auto_bearbeiten(stdscr, "tagespreis", kennzeichen, auto)
     }
 
     return menu_options, action_map, f"Auto {kennzeichen}"
