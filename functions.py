@@ -3,7 +3,7 @@ from action_type_attribute import *
 from garage import Garage 
 from auto import Auto
 import datetime
-from menu_options.auto_hinzufuegen import auto_hinzufuegen
+from auto_hinzufuegen import auto_hinzufuegen
 
 def draw_menu(stdscr):
 
