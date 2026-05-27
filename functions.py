@@ -153,7 +153,7 @@ def auto_liste_menu(stdscr, filter_type, title):
         )
 
         action_map[i] = (
-            lambda stdscr, k=kennzeichen: auto_detail_menu(stdscr, k),
+            lambda stdscr, k=kennzeichen: auto_options_menu(stdscr, k),
             ActionType.MENU
         )
 
@@ -161,7 +161,7 @@ def auto_liste_menu(stdscr, filter_type, title):
 
     return menu_options, action_map, title
 
-def auto_detail_menu(stdscr, kennzeichen):
+def auto_options_menu(stdscr, kennzeichen):
     curses.curs_set(0)
 
     garage = Garage()
@@ -179,7 +179,7 @@ def auto_detail_menu(stdscr, kennzeichen):
     i += 1
 
     menu_options.append("(2) Auto bearbeiten")
-    action_map[i] = (lambda stdscr: auto_bearbeiten(stdscr, kennzeichen), ActionType.MENU)
+    action_map[i] = (lambda stdscr: auto_detail_menu(stdscr, kennzeichen), ActionType.MENU)
     i += 1
 
     # nur wenn vermietet
@@ -259,7 +259,7 @@ def delete_and_refresh(stdscr, garage, kennzeichen):
     autos_anzeigen(stdscr)
 
 
-def list_auto_details_menu(stdscr, kennzeichen):
+def auto_detail_menu(stdscr, kennzeichen):
     curses.curs_set(0)
     auto = Garage().auto_finden(kennzeichen)
 
@@ -274,7 +274,7 @@ def list_auto_details_menu(stdscr, kennzeichen):
     ]
 
     action_map = {
-        0: (lambda stdscr: auto_detail_menu(stdscr, kennzeichen), ActionType.MENU),
+        0: (lambda stdscr: auto_options_menu(stdscr, kennzeichen), ActionType.MENU),
         1: (lambda stdscr: auto_bearbeiten(stdscr, "kennzeichen", kennzeichen, auto), ActionType.MENU),
         2: (lambda stdscr: auto_bearbeiten(stdscr, "marke", kennzeichen, auto), ActionType.MENU),
         3: (lambda stdscr: auto_bearbeiten(stdscr, "modell", kennzeichen, auto), ActionType.MENU),
@@ -305,7 +305,7 @@ def auto_bearbeiten(stdscr, filter, kennzeichen, auto):
         stdscr.clear()
         stdscr.addstr(4, 0, "Error: Es konnte kein gültiges Attribut gefunden werden.")
         curses.napms(2000)
-        return list_auto_details_menu(stdscr, kennzeichen)
+        return auto_detail_menu(stdscr, kennzeichen)
 
     stdscr.clear()
     stdscr.addstr(0, 0, f"Bitte wählen Sie einen neuen Wert für {filter}:")
@@ -321,15 +321,27 @@ def auto_bearbeiten(stdscr, filter, kennzeichen, auto):
         stdscr.addstr(6, 0, "Fehler: Es wurde kein neuer Wert eingegeben.")
         stdscr.refresh()
         curses.napms(2000)
-        return list_auto_details_menu(stdscr, kennzeichen)
+        return auto_detail_menu(stdscr, kennzeichen)
 
     isValid = True
     if filter == "kennzeichen":
         
         neuer_wert = neuer_wert.strip().upper()
 
-        # altes auto löschen, neues mit aktualisiertem kennzeichen hinzufügen
-        ####################
+        auto = Auto(
+        inputs.get("kennzeichen") or "Kein Kennzeichen angegeben",
+        inputs.get("marke") or "Keine Marke gesetzt",
+        inputs.get("modell") or "Kein Modell angegeben",
+        baujahr,
+        kilometer,
+        verbrauch,
+        tagespreis,
+        verliehen=False,
+        verliehen_bis=0,
+        )
+
+        garage = Garage()
+        garage.auto_hinzufügen(auto)
 
     elif filter == "marke":
         
@@ -369,7 +381,7 @@ def auto_bearbeiten(stdscr, filter, kennzeichen, auto):
         stdscr.addstr(6, 0, "Fehler: Es wurde kein gültiger Wert eingegeben.")
         stdscr.refresh()
         curses.napms(2000)
-        return list_auto_details_menu(stdscr, kennzeichen)
+        return auto_detail_menu(stdscr, kennzeichen)
 
     ###############################################################
     # JSON updaten
@@ -377,9 +389,9 @@ def auto_bearbeiten(stdscr, filter, kennzeichen, auto):
     garage.auto_update(kennzeichen, auto)
 
     if filter == "kennzeichen":
-        return list_auto_details_menu(stdscr, neuer_wert)
+        return auto_detail_menu(stdscr, neuer_wert)
 
-    return list_auto_details_menu(stdscr, kennzeichen)
+    return auto_detail_menu(stdscr, kennzeichen)
 
 
 def auto_hinzufuegen(stdscr):
