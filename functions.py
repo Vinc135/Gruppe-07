@@ -33,7 +33,7 @@ def handle_user_input(
     key_input,
     action_map,
     title=None,
-    prompt="Use arrow keys to navigate and press Right Arrow to select: ",
+    prompt="Navigiere mit den Pfeiltasten und drücke die rechte Pfeiltaste, um eine Auswahl zu treffen: ",
 ):
     while True:
         stdscr.clear()
@@ -90,7 +90,7 @@ def handle_user_input(
                         if key_input != "":
                             current_row = int(key_input)
             except ValueError:
-                stdscr.addstr(len(menu_options) + title_offset + 3, 0, "Invalid input, please try again.")
+                stdscr.addstr(len(menu_options) + title_offset + 3, 0, "Ungültige Eingabe, bitte versuche es erneut.")
                 stdscr.refresh()
                 curses.napms(1000)  # Wait 1 second before redrawing the menu
 
@@ -114,7 +114,7 @@ def main_menu():
         4: (lambda stdscr: umsatz(stdscr), ActionType.MENU)
     }
 
-    return menu_options, action_map, "Main Menu"
+    return menu_options, action_map, "Hauptmenü"
 
 ############ Filter Typen
 
@@ -132,7 +132,7 @@ def vergebene_autos(stdscr):
 def auto_liste_menu(stdscr, filter_type, title):
     curses.curs_set(0)
 
-    menu_options = ["(0) BACK"]
+    menu_options = ["(0) ZURÜCK"]
 
     action_map = {
         0: (lambda stdscr: main_menu(), ActionType.MENU)
@@ -167,7 +167,7 @@ def auto_detail_menu(stdscr, kennzeichen):
     garage = Garage()
     auto = garage.auto_finden(kennzeichen)
 
-    menu_options = ["(0) BACK"]
+    menu_options = ["(0) ZURÜCK"]
     action_map = {
         0: (lambda stdscr: autos_anzeigen(stdscr), ActionType.MENU)
     }
