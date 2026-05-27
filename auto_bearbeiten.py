@@ -1,5 +1,4 @@
 import curses
-from functions import auto_detail_menu
 from garage import Garage
 from auto import Auto
 import datetime
@@ -27,7 +26,7 @@ def auto_bearbeiten(stdscr, filter, kennzeichen, auto):
         stdscr.clear()
         stdscr.addstr(4, 0, "Error: Es konnte kein gültiges Attribut gefunden werden.")
         curses.napms(2000)
-        return auto_detail_menu(stdscr, kennzeichen)
+        return __import__('functions').auto_detail_menu(stdscr, kennzeichen)
 
     stdscr.clear()
     stdscr.addstr(0, 0, f"Bitte wählen Sie einen neuen Wert für {filter}:")
@@ -44,7 +43,7 @@ def auto_bearbeiten(stdscr, filter, kennzeichen, auto):
         stdscr.addstr(6, 0, "Fehler: Es wurde kein neuer Wert eingegeben.")
         stdscr.refresh()
         curses.napms(2000)
-        return auto_detail_menu(stdscr, kennzeichen)
+        return __import__('functions').auto_detail_menu(stdscr, kennzeichen)
 
     isValid = True
     # Wenn des Kennzeichen geändert wird, muss das Auto gelöscht und mit neuem Kennzeichen wieder hinzugefügt werden, da das Kennzeichen der Key in unserem Dictionary ist
@@ -107,12 +106,12 @@ def auto_bearbeiten(stdscr, filter, kennzeichen, auto):
         stdscr.addstr(6, 0, "Fehler: Es wurde kein gültiger Wert eingegeben.")
         stdscr.refresh()
         curses.napms(2000)
-        return auto_detail_menu(stdscr, kennzeichen)
+        return __import__('functions').auto_detail_menu(stdscr, kennzeichen)
 
     garage = Garage()
     garage.auto_update(kennzeichen, auto)
 
     if filter == "kennzeichen":
-        return auto_detail_menu(stdscr, neuer_wert)
+        return __import__('functions').auto_detail_menu(stdscr, neuer_wert)
 
-    return auto_detail_menu(stdscr, kennzeichen)
+    return __import__('functions').auto_detail_menu(stdscr, kennzeichen)
