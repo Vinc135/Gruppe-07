@@ -205,9 +205,13 @@ def auto_options_menu(stdscr, kennzeichen):
     return menu_options, action_map, f"Auto {kennzeichen}"
 
 # Funktion um ein Auto zu löschen und danach die Auto Liste zu aktualisieren
-def delete_and_refresh(stdscr, garage, kennzeichen):
+def delete_and_refresh(stdscr, garage: Garage, kennzeichen):
     garage.auto_entfernen(kennzeichen)
-    autos_anzeigen(stdscr)
+    stdscr.refresh()
+    stdscr.clear()
+    stdscr.refresh()
+    # Nach dem Hinzufügen zum Menü zurückkehren
+    return autos_anzeigen(stdscr)
 
 # MENÜ, welches die Details eines Autos anzeigt, die mit deren Auswahl bearbeitet werden können
 def auto_detail_menu(stdscr, kennzeichen):
