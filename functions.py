@@ -102,7 +102,8 @@ def main_menu():
         "(0) Auto hinzufügen",
         "(1) Alle Autos anzeigen",
         "(2) Freie Autos anzeigen",
-        "(3) Vermietete Autos anzeigen"
+        "(3) Vermietete Autos anzeigen",
+        "(4) Erwarteter Umsatz berechnen"
     ]
 
     action_map = {
@@ -110,6 +111,7 @@ def main_menu():
         1: (lambda stdscr: autos_anzeigen(stdscr), ActionType.MENU),
         2: (lambda stdscr: freie_autos(stdscr), ActionType.MENU),
         3: (lambda stdscr: vergebene_autos(stdscr), ActionType.MENU),
+        4: (lambda stdscr: umsatz(stdscr), ActionType.MENU)
     }
 
     return menu_options, action_map, "Main Menu"
@@ -427,4 +429,13 @@ def auto_hinzufuegen(stdscr):
     stdscr.refresh()
     stdscr.getch() # wartet auf userinput
 
+    return main_menu()
+
+def umsatz(stdscr):
+    garage = Garage()
+    curses.curs_set(1) # setzt curser auf sichtbar
+    stdscr.clear()
+    stdscr.addstr(0, 0, f"Erwarteter Umsatz nach allen Rückgaben: {garage.umsatz_berechnen()}€.")
+    stdscr.refresh()
+    stdscr.getch()
     return main_menu()

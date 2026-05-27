@@ -83,7 +83,7 @@ class Garage:
         
         return False
 
-    def tagesumsatz_berechnen(self):
+    def umsatz_berechnen(self):
         data = self._load()
         umsatz = 0
 

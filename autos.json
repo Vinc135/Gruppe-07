@@ -7,7 +7,7 @@
         "verbrauch": 6.7,
         "tagespreis": 70.0,
         "verliehen": false,
-        "verliehen_bis": 0
+        "verliehen_bis": 1
     },
     "ROW-RS-100": {
         "marke": "BMW",
