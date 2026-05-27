@@ -42,9 +42,6 @@ class Garage:
         if kennzeichen in data:
             del data[kennzeichen]
             self._save(data)
-            return True
-
-        return False
 
     def auto_finden(self, kennzeichen):
         data = self._load()
@@ -103,6 +100,17 @@ class Garage:
 
         auto["verliehen"] = True
         auto["verliehen_bis"] = int(tage)
+
+        data[str(kennzeichen)] = auto
+        self._save(data)
+        return True
+
+    def fahrt_hinzufügen(self, kennzeichen, kilometer):
+        data = self._load()
+
+        auto = data.get(str(kennzeichen))
+
+        auto["kilometer"] += kilometer
 
         data[str(kennzeichen)] = auto
         self._save(data)
