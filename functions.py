@@ -1,8 +1,9 @@
 import curses
 from action_type_attribute import *
+from auto_vermietung import *
 from garage import Garage 
-from auto import Auto
-import datetime
+from auto_hinzufuegen import auto_hinzufuegen
+from auto_bearbeiten import auto_bearbeiten
 
 def draw_menu(stdscr):
 
@@ -203,59 +204,6 @@ def auto_options_menu(stdscr, kennzeichen):
 
     return menu_options, action_map, f"Auto {kennzeichen}"
 
-# Funktion um ein Auto freizugeben wenn es bereits vermietet ist
-def freigeben_screen(stdscr, kennzeichen):
-    curses.curs_set(0)
-    garage = Garage()
-    
-    # Auto freigeben und Daten laden
-    garage.zurueckgeben(kennzeichen)
-    auto = garage.auto_finden(kennzeichen)
-    autoname = f"{auto['marke']} {auto['modell']}"
-    
-    # Bestätigungsbildschirm anzeigen
-    while True:
-        stdscr.clear()
-        stdscr.addstr(0, 0, f"Das Auto {kennzeichen} {autoname} wurde freigegeben")
-        stdscr.addstr(2, 0, "Auto erfolgreich freigegeben. Taste drücken")
-        
-        key = stdscr.getch()
-        
-        if key == curses.KEY_RIGHT:
-            return vergebene_autos(stdscr)
-        
-        stdscr.refresh()
-
-# Funktion kümmert sich um das Vermieten eines Autos bei dem der Nutzer die Details dazu in der Konsole angibt
-def vermieten_flow(stdscr, garage, kennzeichen):
-    curses.echo()
-    stdscr.clear()
-
-    auto = garage.auto_finden(kennzeichen)
-
-    stdscr.addstr(0, 0, "Wie viele Tage vermieten?")
-    stdscr.refresh()
-    tage = int(stdscr.getstr(1, 0).decode().strip())
-
-    preis = int(auto["tagespreis"]) * tage
-
-    stdscr.addstr(3, 0, f"Endpreis: {preis}€")
-    stdscr.addstr(5, 0, "Bestätigen? (j/n): ")
-    stdscr.refresh()
-
-    confirm = stdscr.getstr(5, 20).decode().lower()
-
-    curses.noecho()
-
-    if confirm == "j":
-        garage.verleihen(kennzeichen, tage)
-        stdscr.addstr(7, 0, "Auto erfolgreich vermietet.")
-    else:
-        stdscr.addstr(7, 0, "Abgebrochen.")
-
-    stdscr.refresh()
-    stdscr.getch()
-
 # Funktion um ein Auto zu löschen und danach die Auto Liste zu aktualisieren
 def delete_and_refresh(stdscr, garage, kennzeichen):
     garage.auto_entfernen(kennzeichen)
@@ -272,8 +220,8 @@ def auto_detail_menu(stdscr, kennzeichen):
         "(2) # Marke: \t\t\t" + auto["marke"],
         "(3) # Modell: \t\t" + auto["modell"],
         "(4) # Baujahr: \t\t" + str(auto["baujahr"]),
-        "(5) # Verbrauch in Litern: \t" + str(auto["verbrauch"]),
-        "(6) # Tagespreis in EUR: \t" + str(auto["tagespreis"]),
+        "(5) # Verbrauch in Litern: \t" + f"{auto['verbrauch']:.2f}",
+        "(6) # Tagespreis in EUR: \t" + f"{auto['tagespreis']:.2f}",
     ]
 
     action_map = {
@@ -287,169 +235,6 @@ def auto_detail_menu(stdscr, kennzeichen):
     }
 
     return menu_options, action_map, f"Auto {kennzeichen}"
-
-# Funktion um ein bestimmtes Attribut eines Autos zu bearbeiten
-# Das Attribut wird über den Parameter "filter" bestimmt
-def auto_bearbeiten(stdscr, filter, kennzeichen, auto):
-    auto = Garage().auto_finden(kennzeichen)
-    aktueller_wert = ""
-
-    if filter == "kennzeichen":
-        aktueller_wert = kennzeichen
-    elif filter == "marke":
-        aktueller_wert = auto["marke"]
-    elif filter == "modell":
-        aktueller_wert = auto["modell"]
-    elif filter == "baujahr":
-        aktueller_wert = auto["baujahr"]
-    elif filter == "verbrauch":
-        aktueller_wert = auto["verbrauch"]
-    elif filter == "tagespreis":
-        aktueller_wert = auto["tagespreis"]
-    else:
-        stdscr.clear()
-        stdscr.addstr(4, 0, "Error: Es konnte kein gültiges Attribut gefunden werden.")
-        curses.napms(2000)
-        return auto_detail_menu(stdscr, kennzeichen)
-
-    stdscr.clear()
-    stdscr.addstr(0, 0, f"Bitte wählen Sie einen neuen Wert für {filter}:")
-    stdscr.addstr(2, 0, f"Aktueller Wert: {aktueller_wert}")
-    stdscr.addstr(4, 0, "Neuer Wert: ")
-    curses.curs_set(1)
-    curses.echo()
-    neuer_wert = stdscr.getstr(4, 12, 20).decode("utf-8").strip()
-    curses.curs_set(0)
-    curses.noecho()
-
-    # Fehler schmeissen wenn kein neuer Wert eingegeben wurde
-    if neuer_wert == "":
-        stdscr.addstr(6, 0, "Fehler: Es wurde kein neuer Wert eingegeben.")
-        stdscr.refresh()
-        curses.napms(2000)
-        return auto_detail_menu(stdscr, kennzeichen)
-
-    isValid = True
-    # Wenn des Kennzeichen geändert wird, muss das Auto gelöscht und mit neuem Kennzeichen wieder hinzugefügt werden, da das Kennzeichen der Key in unserem Dictionary ist
-    if filter == "kennzeichen":
-        
-        neuer_wert = neuer_wert.strip().upper()
-
-        neuesauto = Auto(
-            neuer_wert,
-            auto["marke"],
-            auto["modell"],
-            auto["baujahr"],
-            auto["kilometer"],
-            auto["verbrauch"],
-            auto["tagespreis"],
-            auto["verliehen"],
-            auto["verliehen_bis"],
-        )
-
-        garage = Garage()
-        garage.auto_hinzufügen(neuesauto)
-        garage.auto_entfernen(kennzeichen)
-
-    # Sonst normale Änderung des Attributs im Auto Dictionary
-    elif filter == "marke":
-        
-        if neuer_wert is None or auto is None or neuer_wert.strip() == "":
-            isValid = False        
-        auto["marke"] = neuer_wert
-
-    elif filter == "modell":
-        
-        if neuer_wert is None or auto is None or neuer_wert.strip() == "":
-            isValid = False        
-        auto["modell"] = neuer_wert
-
-    elif filter == "baujahr":
-
-        neuer_wert = int(neuer_wert)
-        if neuer_wert is None or auto is None or neuer_wert > datetime.date.today().year or neuer_wert < 1500:
-            isValid = False        
-        auto["baujahr"] = neuer_wert 
-
-    elif filter == "verbrauch":
-
-        neuer_wert = float(neuer_wert.replace(",", "."))
-        if neuer_wert is None or auto is None or neuer_wert < 0:
-            isValid = False        
-        auto["verbrauch"] = neuer_wert 
-
-    elif filter == "tagespreis":
-        
-        neuer_wert = float(neuer_wert.replace(",", "."))
-        if neuer_wert is None or auto is None or neuer_wert < 0:
-            isValid = False        
-        auto["tagespreis"] = neuer_wert
-
-    # Fehlerbehandlung für fehlgeschlagene Validierung des neuen Werts
-    if isValid == False:
-        stdscr.addstr(6, 0, "Fehler: Es wurde kein gültiger Wert eingegeben.")
-        stdscr.refresh()
-        curses.napms(2000)
-        return auto_detail_menu(stdscr, kennzeichen)
-
-    garage = Garage()
-    garage.auto_update(kennzeichen, auto)
-
-    if filter == "kennzeichen":
-        return auto_detail_menu(stdscr, neuer_wert)
-
-    return auto_detail_menu(stdscr, kennzeichen)
-
-# Funktion um ein neues Auto hinzuzufügen
-# Die Werte werden über die Konsole einzeln nacheinander eingegeben
-def auto_hinzufuegen(stdscr):
-    curses.curs_set(1) # setzt curser auf sichtbar
-    stdscr.clear()
-
-    fields = [
-        ("kennzeichen", "Kennzeichen"),
-        ("marke", "Marke"),
-        ("modell", "Modell"),
-        ("baujahr", "Baujahr"),
-        ("kilometer", "Kilometer"),
-        ("verbrauch", "Verbrauch"),
-        ("tagespreis", "Tagespreis"),
-    ]
-
-    inputs = {}
-    for i, (key, label) in enumerate(fields): # imput für jede mögliche eingabe eines elements aus fileds
-        stdscr.addstr(i, 0, f"{label}: ") # neue zeile für input unter dem letzten
-        stdscr.refresh()
-        curses.echo() # macht eingabe sichtbar
-        val = stdscr.getstr(i, len(label) + 2).decode("utf-8") # liest eingabe ein an stelle i der konsole nach dem label +2 für ": "
-        curses.noecho() # macht eingabe unsichtbar
-        inputs[key] = val # setzt value
-
-    baujahr = int(inputs.get("baujahr") or 0)
-    kilometer = int(inputs.get("kilometer") or 0)
-    verbrauch = float(inputs.get("verbrauch") or 0)
-    tagespreis = float(inputs.get("tagespreis") or 0)
-
-    auto = Auto(
-        inputs.get("kennzeichen") or "Kein Kennzeichen angegeben",
-        inputs.get("marke") or "Keine Marke gesetzt",
-        inputs.get("modell") or "Kein Modell angegeben",
-        baujahr,
-        kilometer,
-        verbrauch,
-        tagespreis,
-        verliehen=False,
-        verliehen_bis=0,
-    )
-
-    garage = Garage()
-    garage.auto_hinzufügen(auto)
-
-    stdscr.addstr(len(fields) + 1, 0, "Auto erfolgreich hinzugefügt. Drücke eine Taste, um zurückzugehen.")
-    stdscr.refresh()
-    stdscr.getch() # wartet auf userinput
-
-    return main_menu()
 
 # Funktion berechnet den erwarteten Umsatz nach aktuellem Stand der vermieteten Autos und zeigt diesen an
 def umsatz(stdscr):
