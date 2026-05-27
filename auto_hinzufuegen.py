@@ -8,6 +8,7 @@ from auto import Auto
 def auto_hinzufuegen(stdscr):
     curses.curs_set(1) # setzt curser auf sichtbar
     stdscr.clear()
+    content_offset = functions.draw_ascii_header(stdscr)
 
     fields = [
         ("kennzeichen", "Kennzeichen"),
@@ -21,34 +22,33 @@ def auto_hinzufuegen(stdscr):
 
     inputs = {}
     for i, (key, label) in enumerate(fields): # imput für jede mögliche eingabe eines elements aus fileds
-        stdscr.addstr(i, 0, f"{label}: ") # neue zeile für input unter dem letzten
+        row = content_offset + i
+        stdscr.addstr(row, 0, f"{label}: ") # neue zeile für input unter dem letzten
         stdscr.refresh()
-        curses.echo() # macht eingabe sichtbar
-        val = stdscr.getstr(i, len(label) + 2).decode("utf-8") # liest eingabe ein an stelle i der konsole nach dem label +2 für ": "
-        curses.noecho() # macht eingabe unsichtbar
+        val = functions.read_limited_input(stdscr, row, len(label) + 2, max_length=40)
         inputs[key] = val # setzt value
 
     if not (inputs.get("kennzeichen") or "").strip():
-        stdscr.addstr(len(fields) + 1, 0, "Fehler: Kennzeichen darf nicht leer sein. Drücke eine Taste, um zurückzugehen.")
+        stdscr.addstr(content_offset + len(fields) + 1, 0, "Fehler: Kennzeichen darf nicht leer sein. Drücke eine Taste, um zurückzugehen.")
         stdscr.refresh()
         stdscr.getch()
         return functions.main_menu()
 
     if not (inputs.get("marke") or "").strip():
-        stdscr.addstr(len(fields) + 1, 0, "Fehler: Marke darf nicht leer sein. Drücke eine Taste, um zurückzugehen.")
+        stdscr.addstr(content_offset + len(fields) + 1, 0, "Fehler: Marke darf nicht leer sein. Drücke eine Taste, um zurückzugehen.")
         stdscr.refresh()
         stdscr.getch()
         return functions.main_menu()
 
     if not (inputs.get("modell") or "").strip():
-        stdscr.addstr(len(fields) + 1, 0, "Fehler: Modell darf nicht leer sein. Drücke eine Taste, um zurückzugehen.")
+        stdscr.addstr(content_offset + len(fields) + 1, 0, "Fehler: Modell darf nicht leer sein. Drücke eine Taste, um zurückzugehen.")
         stdscr.refresh()
         stdscr.getch()
         return functions.main_menu()
 
     baujahr_raw = (inputs.get("baujahr") or "").strip()
     if not baujahr_raw:
-        stdscr.addstr(len(fields) + 1, 0, "Fehler: Kein Baujahr angegeben. Drücke eine Taste, um zurückzugehen.")
+        stdscr.addstr(content_offset + len(fields) + 1, 0, "Fehler: Kein Baujahr angegeben. Drücke eine Taste, um zurückzugehen.")
         stdscr.refresh()
         stdscr.getch()
         return functions.main_menu()
@@ -58,7 +58,7 @@ def auto_hinzufuegen(stdscr):
 
     verbrauch_raw = (inputs.get("verbrauch") or "").strip()
     if not verbrauch_raw:
-        stdscr.addstr(len(fields) + 1, 0, "Fehler: Kein Verbrauch angegeben. Drücke eine Taste, um zurückzugehen.")
+        stdscr.addstr(content_offset + len(fields) + 1, 0, "Fehler: Kein Verbrauch angegeben. Drücke eine Taste, um zurückzugehen.")
         stdscr.refresh()
         stdscr.getch()
         return functions.main_menu()
@@ -66,7 +66,7 @@ def auto_hinzufuegen(stdscr):
 
     tagespreis_raw = (inputs.get("tagespreis") or "").strip()
     if not tagespreis_raw:
-        stdscr.addstr(len(fields) + 1, 0, "Fehler: Kein Tagespreis angegeben. Drücke eine Taste, um zurückzugehen.")
+        stdscr.addstr(content_offset + len(fields) + 1, 0, "Fehler: Kein Tagespreis angegeben. Drücke eine Taste, um zurückzugehen.")
         stdscr.refresh()
         stdscr.getch()
         return functions.main_menu()
@@ -87,7 +87,7 @@ def auto_hinzufuegen(stdscr):
     garage = Garage()
     garage.auto_hinzufügen(auto)
 
-    stdscr.addstr(len(fields) + 1, 0, "Auto erfolgreich hinzugefügt. Drücke eine Taste, um zurückzugehen.")
+    stdscr.addstr(content_offset + len(fields) + 1, 0, "Auto erfolgreich hinzugefügt. Drücke eine Taste, um zurückzugehen.")
     stdscr.refresh()
     stdscr.getch() # wartet auf userinput
 

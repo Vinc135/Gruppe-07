@@ -4,6 +4,48 @@ from garage import Garage
 from auto_hinzufuegen import auto_hinzufuegen
 from auto_bearbeiten import auto_bearbeiten
 
+ASCII_HEADER = [
+    r"+------------------------------------------------------------+",
+    r"|                      AUTO VERMIETUNG                      |",
+    r"+------------------------------------------------------------+",
+]
+
+
+def draw_ascii_header(stdscr):
+    max_y, max_x = stdscr.getmaxyx()
+
+    for row, line in enumerate(ASCII_HEADER):
+        if row >= max_y:
+            break
+
+        clipped_line = line[: max_x - 1] if max_x > 1 else ""
+        try:
+            stdscr.addstr(row, 0, clipped_line)
+        except curses.error:
+            # Small terminal windows can reject writes at the lower/right edge.
+            pass
+
+    # One empty spacer line between header and menu content.
+    return min(len(ASCII_HEADER) + 1, max_y)
+
+
+def read_limited_input(stdscr, row, col, max_length=30):
+    max_y, max_x = stdscr.getmaxyx()
+
+    if row >= max_y:
+        return ""
+
+    available_width = max_x - col - 1
+    if available_width <= 0:
+        return ""
+
+    read_limit = min(max_length, available_width)
+
+    curses.echo()
+    value = stdscr.getstr(row, col, read_limit).decode("utf-8")
+    curses.noecho()
+    return value
+
 def draw_menu(stdscr):
 
     curses.curs_set(0)  # Hide the cursor
@@ -37,8 +79,10 @@ def handle_user_input(
 ):
     while True:
         stdscr.clear()
+        content_offset = draw_ascii_header(stdscr)
+
         if title:
-            stdscr.addstr(0, 0, title)
+            stdscr.addstr(content_offset, 0, title)
             title_offset = 1
         else:
             title_offset = 0
@@ -46,11 +90,11 @@ def handle_user_input(
         # Menu starts from line 1 (or 0 if no title)
         for idx, row in enumerate(menu_options):
             if idx == current_row:
-                stdscr.addstr(idx + title_offset + 1, 0, f"> {row}", curses.A_REVERSE)
+                stdscr.addstr(idx + content_offset + title_offset + 1, 0, f"> {row}", curses.A_REVERSE)
             else:
-                stdscr.addstr(idx + title_offset + 1, 0, f"  {row}")
+                stdscr.addstr(idx + content_offset + title_offset + 1, 0, f"  {row}")
 
-        stdscr.addstr(len(menu_options) + title_offset + 2, 0, prompt)
+        stdscr.addstr(len(menu_options) + content_offset + title_offset + 2, 0, prompt)
 
         key = stdscr.getch()  # Get user input
 
@@ -81,7 +125,11 @@ def handle_user_input(
                         if key_input != "":
                             current_row = int(key_input)
             except ValueError:
-                stdscr.addstr(len(menu_options) + title_offset + 3, 0, "Ungültige Eingabe, bitte versuche es erneut.")
+                stdscr.addstr(
+                    len(menu_options) + content_offset + title_offset + 3,
+                    0,
+                    "Ungültige Eingabe, bitte versuche es erneut.",
+                )
                 stdscr.refresh()
                 curses.napms(1000)  # Wait 1 second before redrawing the menu
 
