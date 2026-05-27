@@ -164,6 +164,7 @@ def auto_liste_menu(stdscr, filter_type, title):
 
 # Menü zeigt die möglichen Aktionen an die für das Auto durchgeführt werden können
 def auto_options_menu(stdscr, kennzeichen):
+    stdscr.refresh()
     curses.curs_set(0)
 
     garage = Garage()
@@ -177,7 +178,7 @@ def auto_options_menu(stdscr, kennzeichen):
     i = 1
 
     menu_options.append("(1) Auto löschen")
-    action_map[i] = (lambda stdscr: delete_and_refresh(stdscr, garage, kennzeichen), ActionType.ACTION)
+    action_map[i] = (lambda stdscr: delete_and_refresh(stdscr, garage, kennzeichen), ActionType.MENU)
     i += 1
 
     menu_options.append("(2) Auto bearbeiten")
@@ -189,7 +190,7 @@ def auto_options_menu(stdscr, kennzeichen):
         menu_options.append(f"({i}) Freigeben")
         action_map[i] = (
             lambda stdscr: freigeben_screen(stdscr, kennzeichen),
-            ActionType.ACTION
+            ActionType.MENU
         )
         i += 1
 
@@ -198,7 +199,7 @@ def auto_options_menu(stdscr, kennzeichen):
         menu_options.append(f"({i}) Vermieten")
         action_map[i] = (
             lambda stdscr: vermieten_flow(stdscr, garage, kennzeichen),
-            ActionType.ACTION
+            ActionType.MENU
         )
         i += 1
 
@@ -209,7 +210,6 @@ def delete_and_refresh(stdscr, garage: Garage, kennzeichen):
     garage.auto_entfernen(kennzeichen)
     stdscr.refresh()
     stdscr.clear()
-    stdscr.refresh()
     # Nach dem Hinzufügen zum Menü zurückkehren
     return autos_anzeigen(stdscr)
 

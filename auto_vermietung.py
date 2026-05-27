@@ -53,6 +53,9 @@ def freigeben_screen(stdscr, kennzeichen):
             return functions.vergebene_autos(stdscr)
 
         stdscr.refresh()
+        stdscr.clear()
+        # Nach dem Hinzufügen zum Menü zurückkehren
+        return functions.auto_options_menu(stdscr, kennzeichen)
 
 # Funktion kümmert sich um das Vermieten eines Autos bei dem der Nutzer die Details dazu in der Konsole angibt
 def vermieten_flow(stdscr, garage, kennzeichen):
@@ -82,4 +85,6 @@ def vermieten_flow(stdscr, garage, kennzeichen):
         stdscr.addstr(7, 0, "Abgebrochen.")
 
     stdscr.refresh()
-    stdscr.getch()
+    stdscr.clear()
+    # Nach dem Hinzufügen zum Menü zurückkehren
+    return functions.auto_options_menu(stdscr, kennzeichen)

@@ -3,9 +3,19 @@
         "marke": "BMW",
         "modell": "118i F20",
         "baujahr": 2015,
-        "kilometer": 2082419,
+        "kilometer": 2082649,
         "verbrauch": 6.7,
         "tagespreis": 70.0,
+        "verliehen": false,
+        "verliehen_bis": 0
+    },
+    "ROW-RS-100": {
+        "marke": "BMW",
+        "modell": "E46",
+        "baujahr": 2002,
+        "kilometer": 205000,
+        "verbrauch": 8.5,
+        "tagespreis": 50.0,
         "verliehen": false,
         "verliehen_bis": 0
     }
