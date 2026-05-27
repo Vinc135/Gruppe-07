@@ -49,6 +49,17 @@ class Garage:
     def auto_finden(self, kennzeichen):
         data = self._load()
         return data.get(str(kennzeichen))
+    
+    def auto_update(self, kennzeichen, auto) -> bool:
+        data = self._load()
+        
+        if kennzeichen not in data:
+            return False
+        
+        data[kennzeichen] = auto
+
+        self._save(data)
+        return True
 
     def alle_autos(self):
         return self._load()
