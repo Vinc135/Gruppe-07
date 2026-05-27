@@ -125,8 +125,8 @@ def handle_user_input(
         if max_y <= required_rows or max_x <= required_cols:
             stdscr.clear()
             content_offset = draw_ascii_header(stdscr)
-            safe_addstr(stdscr, content_offset + 0, 0, "Fenster zu klein fuer die aktuelle Ansicht.")
-            safe_addstr(stdscr, content_offset + 1, 0, "Bitte Terminal vergroessern und eine Taste druecken.")
+            safe_addstr(stdscr, content_offset + 0, 0, "Fenster zu klein für die aktuelle Ansicht.")
+            safe_addstr(stdscr, content_offset + 1, 0, "Bitte Terminal vergrößern und eine Taste drücken.")
             stdscr.refresh()
             stdscr.getch()
             continue
