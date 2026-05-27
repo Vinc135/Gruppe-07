@@ -1,4 +1,5 @@
 import curses
+import functions
 from garage import Garage
 from auto import Auto
 
@@ -52,5 +53,4 @@ def auto_hinzufuegen(stdscr):
     stdscr.getch() # wartet auf userinput
 
     # Nach dem Hinzufügen zum Menü zurückkehren
-    import functions
     return functions.main_menu()
