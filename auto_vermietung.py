@@ -5,7 +5,10 @@ from auto import *
 
 # Funktion um ein Auto freizugeben wenn es bereits vermietet ist
 def freigeben_screen(stdscr, kennzeichen):
-    curses.curs_set(1)
+    try:
+        curses.curs_set(1)
+    except curses.error:
+        pass
     curses.echo()
 
     garage = Garage()
@@ -17,7 +20,7 @@ def freigeben_screen(stdscr, kennzeichen):
     # Kilometer abfragen
     stdscr.clear()
     content_offset = functions.draw_ascii_header(stdscr)
-    stdscr.addstr(content_offset + 0, 0, f"Wie viele Kilometer wurden mit {kennzeichen} gefahren?")
+    functions.safe_addstr(stdscr, content_offset + 0, 0, f"Wie viele Kilometer wurden mit {kennzeichen} gefahren?")
     stdscr.refresh()
 
     gefahrene_km = int(functions.read_limited_input(stdscr, content_offset + 1, 0, max_length=12).strip())
@@ -29,25 +32,30 @@ def freigeben_screen(stdscr, kennzeichen):
     garage.zurueckgeben(kennzeichen)
 
     curses.noecho()
-    curses.curs_set(0)
+    try:
+        curses.curs_set(0)
+    except curses.error:
+        pass
 
     # Bestätigungsbildschirm anzeigen
     while True:
         stdscr.clear()
         content_offset = functions.draw_ascii_header(stdscr)
-        stdscr.addstr(
+        functions.safe_addstr(
+            stdscr,
             content_offset + 0,
             0,
             f"Das Auto {kennzeichen} {autoname} wurde freigegeben"
         )
 
-        stdscr.addstr(
+        functions.safe_addstr(
+            stdscr,
             content_offset + 2,
             0,
             f"{gefahrene_km} km wurden hinzugefügt."
         )
 
-        stdscr.addstr(content_offset + 4, 0, "Auto erfolgreich freigegeben. Taste drücken")
+        functions.safe_addstr(stdscr, content_offset + 4, 0, "Auto erfolgreich freigegeben. Taste druecken")
 
         key = stdscr.getch()
 
@@ -67,14 +75,14 @@ def vermieten_flow(stdscr, garage, kennzeichen):
 
     auto = garage.auto_finden(kennzeichen)
 
-    stdscr.addstr(content_offset + 0, 0, "Wie viele Tage vermieten?")
+    functions.safe_addstr(stdscr, content_offset + 0, 0, "Wie viele Tage vermieten?")
     stdscr.refresh()
     tage = int(functions.read_limited_input(stdscr, content_offset + 1, 0, max_length=6).strip())
 
     preis = int(auto["tagespreis"]) * tage
 
-    stdscr.addstr(content_offset + 3, 0, f"Endpreis: {preis}€")
-    stdscr.addstr(content_offset + 5, 0, "Bestätigen? (j/n): ")
+    functions.safe_addstr(stdscr, content_offset + 3, 0, f"Endpreis: {preis} EUR")
+    functions.safe_addstr(stdscr, content_offset + 5, 0, "Bestaetigen? (j/n): ")
     stdscr.refresh()
 
     confirm = functions.read_limited_input(stdscr, content_offset + 5, 20, max_length=1).lower()
@@ -83,9 +91,9 @@ def vermieten_flow(stdscr, garage, kennzeichen):
 
     if confirm == "j":
         garage.verleihen(kennzeichen, tage)
-        stdscr.addstr(content_offset + 7, 0, "Auto erfolgreich vermietet.")
+        functions.safe_addstr(stdscr, content_offset + 7, 0, "Auto erfolgreich vermietet.")
     else:
-        stdscr.addstr(content_offset + 7, 0, "Abgebrochen.")
+        functions.safe_addstr(stdscr, content_offset + 7, 0, "Abgebrochen.")
 
     stdscr.refresh()
     stdscr.clear()

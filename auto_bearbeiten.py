@@ -26,22 +26,28 @@ def auto_bearbeiten(stdscr, filter, kennzeichen, auto):
     else:
         stdscr.clear()
         content_offset = functions.draw_ascii_header(stdscr)
-        stdscr.addstr(4, 0, "Error: Es konnte kein gültiges Attribut gefunden werden.")
+        functions.safe_addstr(stdscr, content_offset + 4, 0, "Error: Es konnte kein gueltiges Attribut gefunden werden.")
         curses.napms(2000)
         return functions.auto_detail_menu(stdscr, kennzeichen)
 
     stdscr.clear()
     content_offset = functions.draw_ascii_header(stdscr)
-    stdscr.addstr(content_offset + 0, 0, f"Bitte wählen Sie einen neuen Wert für {filter}:")
-    stdscr.addstr(content_offset + 2, 0, f"Aktueller Wert: {aktueller_wert}")
-    stdscr.addstr(content_offset + 4, 0, "Neuer Wert: ")
-    curses.curs_set(1)
+    functions.safe_addstr(stdscr, content_offset + 0, 0, f"Bitte waehlen Sie einen neuen Wert fuer {filter}:")
+    functions.safe_addstr(stdscr, content_offset + 2, 0, f"Aktueller Wert: {aktueller_wert}")
+    functions.safe_addstr(stdscr, content_offset + 4, 0, "Neuer Wert: ")
+    try:
+        curses.curs_set(1)
+    except curses.error:
+        pass
     neuer_wert = functions.read_limited_input(stdscr, content_offset + 4, 12, max_length=30).strip()
-    curses.curs_set(0)
+    try:
+        curses.curs_set(0)
+    except curses.error:
+        pass
 
     # Fehler schmeissen wenn kein neuer Wert eingegeben wurde
     if neuer_wert == "":
-        stdscr.addstr(content_offset + 6, 0, "Fehler: Es wurde kein neuer Wert eingegeben.")
+        functions.safe_addstr(stdscr, content_offset + 6, 0, "Fehler: Es wurde kein neuer Wert eingegeben.")
         stdscr.refresh()
         curses.napms(2000)
         return functions.auto_detail_menu(stdscr, kennzeichen)
@@ -112,7 +118,7 @@ def auto_bearbeiten(stdscr, filter, kennzeichen, auto):
 
     # Fehlerbehandlung für fehlgeschlagene Validierung des neuen Werts
     if error_message != "":
-        stdscr.addstr(content_offset + 6, 0, f"Fehler: {error_message}")
+        functions.safe_addstr(stdscr, content_offset + 6, 0, f"Fehler: {error_message}")
         stdscr.refresh()
         curses.napms(3000)
         return functions.auto_detail_menu(stdscr, kennzeichen)

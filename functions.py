@@ -6,9 +6,38 @@ from auto_bearbeiten import auto_bearbeiten
 
 ASCII_HEADER = [
     r"+------------------------------------------------------------+",
-    r"|                      AUTO VERMIETUNG                      |",
+    r"|                      AUTO VERMIETUNG                       |",
     r"+------------------------------------------------------------+",
 ]
+
+
+def safe_addstr(stdscr, row, col, text, attr=None):
+    max_y, max_x = stdscr.getmaxyx()
+
+    if row < 0 or row >= max_y or col >= max_x:
+        return
+
+    safe_col = max(col, 0)
+    text_value = str(text)
+
+    if col < 0:
+        text_value = text_value[-col:]
+
+    available_width = max_x - safe_col - 1
+    if available_width <= 0:
+        return
+
+    clipped_text = text_value[:available_width]
+    if not clipped_text:
+        return
+
+    try:
+        if attr is None:
+            stdscr.addstr(row, safe_col, clipped_text)
+        else:
+            stdscr.addstr(row, safe_col, clipped_text, attr)
+    except curses.error:
+        pass
 
 
 def draw_ascii_header(stdscr):
@@ -19,11 +48,7 @@ def draw_ascii_header(stdscr):
             break
 
         clipped_line = line[: max_x - 1] if max_x > 1 else ""
-        try:
-            stdscr.addstr(row, 0, clipped_line)
-        except curses.error:
-            # Small terminal windows can reject writes at the lower/right edge.
-            pass
+        safe_addstr(stdscr, row, 0, clipped_line)
 
     # One empty spacer line between header and menu content.
     return min(len(ASCII_HEADER) + 1, max_y)
@@ -47,8 +72,10 @@ def read_limited_input(stdscr, row, col, max_length=30):
     return value
 
 def draw_menu(stdscr):
-
-    curses.curs_set(0)  # Hide the cursor
+    try:
+        curses.curs_set(0)  # Hide the cursor
+    except curses.error:
+        pass
 
     menu_options, action_map, title = main_menu()
     exit_loop = False
@@ -80,21 +107,38 @@ def handle_user_input(
     while True:
         stdscr.clear()
         content_offset = draw_ascii_header(stdscr)
+        max_y, max_x = stdscr.getmaxyx()
 
         if title:
-            stdscr.addstr(content_offset, 0, title)
+            safe_addstr(stdscr, content_offset, 0, title)
             title_offset = 1
         else:
             title_offset = 0
 
+        required_rows = content_offset + title_offset + len(menu_options) + 4
+        required_cols = max(
+            len(prompt) + 1,
+            len(title or "") + 1,
+            *(len(option) + 3 for option in menu_options),
+        )
+
+        if max_y <= required_rows or max_x <= required_cols:
+            stdscr.clear()
+            content_offset = draw_ascii_header(stdscr)
+            safe_addstr(stdscr, content_offset + 0, 0, "Fenster zu klein fuer die aktuelle Ansicht.")
+            safe_addstr(stdscr, content_offset + 1, 0, "Bitte Terminal vergroessern und eine Taste druecken.")
+            stdscr.refresh()
+            stdscr.getch()
+            continue
+
         # Menu starts from line 1 (or 0 if no title)
         for idx, row in enumerate(menu_options):
             if idx == current_row:
-                stdscr.addstr(idx + content_offset + title_offset + 1, 0, f"> {row}", curses.A_REVERSE)
+                safe_addstr(stdscr, idx + content_offset + title_offset + 1, 0, f"> {row}", curses.A_REVERSE)
             else:
-                stdscr.addstr(idx + content_offset + title_offset + 1, 0, f"  {row}")
+                safe_addstr(stdscr, idx + content_offset + title_offset + 1, 0, f"  {row}")
 
-        stdscr.addstr(len(menu_options) + content_offset + title_offset + 2, 0, prompt)
+        safe_addstr(stdscr, len(menu_options) + content_offset + title_offset + 2, 0, prompt)
 
         key = stdscr.getch()  # Get user input
 
@@ -125,7 +169,7 @@ def handle_user_input(
                         if key_input != "":
                             current_row = int(key_input)
             except ValueError:
-                stdscr.addstr(
+                safe_addstr(
                     len(menu_options) + content_offset + title_offset + 3,
                     0,
                     "Ungültige Eingabe, bitte versuche es erneut.",
