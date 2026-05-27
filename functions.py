@@ -2,8 +2,6 @@ import curses
 from action_type_attribute import *
 from auto_vermietung import freigeben_screen, vermieten_flow
 from garage import Garage 
-from auto import Auto
-import datetime
 from auto_hinzufuegen import auto_hinzufuegen
 from auto_bearbeiten import auto_bearbeiten
 
