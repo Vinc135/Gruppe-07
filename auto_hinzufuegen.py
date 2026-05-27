@@ -28,15 +28,54 @@ def auto_hinzufuegen(stdscr):
         curses.noecho() # macht eingabe unsichtbar
         inputs[key] = val # setzt value
 
-    baujahr = int(inputs.get("baujahr") or 0)
+    if not (inputs.get("kennzeichen") or "").strip():
+        stdscr.addstr(len(fields) + 1, 0, "Fehler: Kennzeichen darf nicht leer sein. Drücke eine Taste, um zurückzugehen.")
+        stdscr.refresh()
+        stdscr.getch()
+        return functions.main_menu()
+
+    if not (inputs.get("marke") or "").strip():
+        stdscr.addstr(len(fields) + 1, 0, "Fehler: Marke darf nicht leer sein. Drücke eine Taste, um zurückzugehen.")
+        stdscr.refresh()
+        stdscr.getch()
+        return functions.main_menu()
+
+    if not (inputs.get("modell") or "").strip():
+        stdscr.addstr(len(fields) + 1, 0, "Fehler: Modell darf nicht leer sein. Drücke eine Taste, um zurückzugehen.")
+        stdscr.refresh()
+        stdscr.getch()
+        return functions.main_menu()
+
+    baujahr_raw = (inputs.get("baujahr") or "").strip()
+    if not baujahr_raw:
+        stdscr.addstr(len(fields) + 1, 0, "Fehler: Kein Baujahr angegeben. Drücke eine Taste, um zurückzugehen.")
+        stdscr.refresh()
+        stdscr.getch()
+        return functions.main_menu()
+    baujahr = int(baujahr_raw)
+
     kilometer = int(inputs.get("kilometer") or 0)
-    verbrauch = float(inputs.get("verbrauch") or 0)
-    tagespreis = float(inputs.get("tagespreis") or 0)
+
+    verbrauch_raw = (inputs.get("verbrauch") or "").strip()
+    if not verbrauch_raw:
+        stdscr.addstr(len(fields) + 1, 0, "Fehler: Kein Verbrauch angegeben. Drücke eine Taste, um zurückzugehen.")
+        stdscr.refresh()
+        stdscr.getch()
+        return functions.main_menu()
+    verbrauch = float(verbrauch_raw)
+
+    tagespreis_raw = (inputs.get("tagespreis") or "").strip()
+    if not tagespreis_raw:
+        stdscr.addstr(len(fields) + 1, 0, "Fehler: Kein Tagespreis angegeben. Drücke eine Taste, um zurückzugehen.")
+        stdscr.refresh()
+        stdscr.getch()
+        return functions.main_menu()
+    tagespreis = float(tagespreis_raw)
 
     auto = Auto(
-        inputs.get("kennzeichen") or "Kein Kennzeichen angegeben",
-        inputs.get("marke") or "Keine Marke gesetzt",
-        inputs.get("modell") or "Kein Modell angegeben",
+        inputs.get("kennzeichen"),
+        inputs.get("marke"),
+        inputs.get("modell"),
         baujahr,
         kilometer,
         verbrauch,
