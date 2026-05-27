@@ -1,6 +1,6 @@
 import curses
 from action_type_attribute import *
-from auto_vermietung import freigeben_screen, vermieten_flow
+from auto_vermietung import *
 from garage import Garage 
 from auto_hinzufuegen import auto_hinzufuegen
 from auto_bearbeiten import auto_bearbeiten
@@ -220,8 +220,8 @@ def auto_detail_menu(stdscr, kennzeichen):
         "(2) # Marke: \t\t\t" + auto["marke"],
         "(3) # Modell: \t\t" + auto["modell"],
         "(4) # Baujahr: \t\t" + str(auto["baujahr"]),
-        "(5) # Verbrauch in Litern: \t" + str(auto["verbrauch"]),
-        "(6) # Tagespreis in EUR: \t" + str(auto["tagespreis"]),
+        "(5) # Verbrauch in Litern: \t" + f"{auto['verbrauch']:.2f}",
+        "(6) # Tagespreis in EUR: \t" + f"{auto['tagespreis']:.2f}",
     ]
 
     action_map = {

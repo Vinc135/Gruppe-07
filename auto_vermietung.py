@@ -1,5 +1,5 @@
 import curses
-from functions import vergebene_autos
+from functions import *
 from garage import Garage
 
 # Funktion um ein Auto freizugeben wenn es bereits vermietet ist
