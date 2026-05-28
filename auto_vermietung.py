@@ -55,7 +55,7 @@ def freigeben_screen(stdscr, kennzeichen):
             f"{gefahrene_km} km wurden hinzugefügt."
         )
 
-        functions.safe_addstr(stdscr, content_offset + 4, 0, "Auto erfolgreich freigegeben. Taste druecken")
+        functions.safe_addstr(stdscr, content_offset + 4, 0, "Auto erfolgreich freigegeben. Taste drücken um fortzufahren.")
 
         key = stdscr.getch()
 
