@@ -1,11 +1,41 @@
 {
     "ROW-RS-100": {
-        "marke": "Audi",
+        "marke": "BMW",
         "modell": "E46",
         "baujahr": 2002,
         "kilometer": 205000,
         "verbrauch": 8.5,
         "tagespreis": 50.0,
+        "verliehen": false,
+        "verliehen_bis": 0
+    },
+    "WF-LL-1412": {
+        "marke": "Volkswagen",
+        "modell": "Polo GTI n46",
+        "baujahr": 2017,
+        "kilometer": 78000,
+        "verbrauch": 9.2,
+        "tagespreis": 19.0,
+        "verliehen": false,
+        "verliehen_bis": 0
+    },
+    "WOB-F-440E": {
+        "marke": "Volkswagen",
+        "modell": "Multivan",
+        "baujahr": 2025,
+        "kilometer": 27000,
+        "verbrauch": 11.2,
+        "tagespreis": 999.0,
+        "verliehen": false,
+        "verliehen_bis": 0
+    },
+    "WF-RL-130": {
+        "marke": "Opel",
+        "modell": "Astra",
+        "baujahr": 1999,
+        "kilometer": 174000,
+        "verbrauch": 7.7,
+        "tagespreis": 1.0,
         "verliehen": false,
         "verliehen_bis": 0
     }
