@@ -56,7 +56,7 @@ def auto_bearbeiten(stdscr, filter, kennzeichen, auto):
     # Wenn des Kennzeichen geändert wird, muss das Auto gelöscht und mit neuem Kennzeichen wieder hinzugefügt werden, da das Kennzeichen der Key in unserem Dictionary ist
     if filter == "kennzeichen":
         
-        neuer_wert = neuer_wert.strip().upper()
+        neuer_wert = neuer_wert.upper()
         neuesauto = Auto(
             neuer_wert,
             auto["marke"],
@@ -75,13 +75,13 @@ def auto_bearbeiten(stdscr, filter, kennzeichen, auto):
     # Sonst normale Änderung des Attributs im Auto Dictionary
     elif filter == "marke":
         
-        if neuer_wert is None or auto is None or neuer_wert.strip() == "":   
+        if neuer_wert is None or auto is None or neuer_wert == "":   
             error_message = "Bitte geben Sie einen gültigen Text ein."
         auto["marke"] = neuer_wert
 
     elif filter == "modell":
         
-        if neuer_wert is None or auto is None or neuer_wert.strip() == "":
+        if neuer_wert is None or auto is None or neuer_wert == "":
             error_message = "Bitte geben Sie einen gültigen Text ein."
         auto["modell"] = neuer_wert
 
