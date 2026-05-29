@@ -5,6 +5,18 @@ from auto import *
 
 # Funktion um ein Auto freizugeben wenn es bereits vermietet ist
 def freigeben_screen(stdscr, kennzeichen):
+    """
+    Gibt ein vermietetes Auto frei, erfasst gefahrene Kilometer und aktualisiert die Daten.
+
+    @param stdscr: curses Screen für die Benutzeroberfläche
+    @param kennzeichen: Kennzeichen des freizugebenden Autos
+
+    @return: Weiterleitung zum entsprechenden Menü
+
+    @note:
+    - Gefahrene Kilometer werden abgefragt und addiert.
+    - Auto wird anschließend als verfügbar markiert.
+    """
     try:
         curses.curs_set(1)
     except curses.error:
@@ -69,6 +81,19 @@ def freigeben_screen(stdscr, kennzeichen):
 
 # Funktion kümmert sich um das Vermieten eines Autos bei dem der Nutzer die Details dazu in der Konsole angibt
 def vermieten_flow(stdscr, garage, kennzeichen):
+    """
+    Steuert den Vermietungsprozess eines Autos über eine curses-Oberfläche.
+
+    @param stdscr: curses Screen für die Benutzeroberfläche
+    @param garage: Garage-Instanz zur Datenverwaltung
+    @param kennzeichen: Kennzeichen des zu vermietenden Autos
+
+    @return: Rückkehr zum Optionsmenü des Autos
+
+    @note:
+    - Mietdauer wird abgefragt und Gesamtpreis berechnet.
+    - Vermietung erfolgt nur nach Bestätigung durch den Nutzer.
+    """
     curses.echo()
     stdscr.clear()
     content_offset = functions.draw_ascii_header(stdscr)

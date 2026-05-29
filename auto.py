@@ -4,6 +4,26 @@ import datetime
 
 
 class Auto:
+    """
+    Repräsentiert ein Auto und verwaltet die persistente Speicherung in einer JSON-Datei.
+
+    @attribute FILE: Pfad zur JSON-Datei für die Speicherung aller Autos
+
+    @param kennzeichen: Eindeutiges Kennzeichen des Autos
+    @param marke: Hersteller des Autos
+    @param modell: Modellbezeichnung
+    @param baujahr: Baujahr des Autos
+    @param kilometer: Aktueller Kilometerstand
+    @param verbrauch: Durchschnittlicher Verbrauch
+    @param tagespreis: Mietpreis pro Tag
+    @param verliehen: Gibt an, ob das Auto aktuell vermietet ist
+    @param verliehen_bis: Datum oder Dauer der aktuellen Vermietung
+
+    @note:
+    - Daten werden in einer JSON-Datei gespeichert und geladen.
+    - Methoden _load und _save übernehmen das Lesen und Schreiben der Datei.
+    - _refresh lädt die aktuellen Daten des Autos anhand des Kennzeichens.
+    """
     FILE = "autos.json"
 
     def __init__(self, kennzeichen, marke, modell, baujahr, kilometer, verbrauch, tagespreis, verliehen=False, verliehen_bis=0):

@@ -8,6 +8,21 @@ import datetime
 # Funktion um ein bestimmtes Attribut eines Autos zu bearbeiten
 # Das Attribut wird über den Parameter "filter" bestimmt
 def auto_bearbeiten(stdscr, filter, kennzeichen, auto):
+    """
+    Bearbeitet ein bestimmtes Attribut eines Autos über eine curses-Oberfläche
+    und speichert die Änderung in der Garage.
+
+    @param stdscr: curses Screen für die UI
+    @param filter: Zu änderndes Attribut (z. B. "kennzeichen", "marke", "modell", "baujahr", "verbrauch", "tagespreis")
+    @param kennzeichen: Aktuelles Kennzeichen (eindeutiger Schlüssel)
+    @param auto: Fahrzeugdaten (wird intern neu geladen)
+
+    @return: Rückkehr zum Detailmenü des Autos
+
+    @note:
+    - Bei Kennzeichenänderung wird das Auto neu erstellt und das alte gelöscht.
+    - Eingaben werden je nach Typ validiert, bei Fehler erfolgt Rücksprung ins Menü.
+    """
     auto = Garage().auto_finden(kennzeichen)
     aktueller_wert = ""
 

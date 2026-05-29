@@ -6,6 +6,18 @@ from auto import Auto
 # Funktion um ein neues Auto hinzuzufügen
 # Die Werte werden über die Konsole einzeln nacheinander eingegeben
 def auto_hinzufuegen(stdscr):
+    """
+    Erfasst ein neues Auto über eine curses-Oberfläche und speichert es in der Garage.
+
+    @param stdscr: curses Screen für die Benutzeroberfläche
+
+    @return: Rückkehr zum Hauptmenü
+
+    @note:
+    - Eingaben erfolgen nacheinander für alle Fahrzeugattribute.
+    - Pflichtfelder werden geprüft, bei Fehler erfolgt Rücksprung ins Menü.
+    - Numerische Werte werden in passende Datentypen umgewandelt.
+    """
     try:
         curses.curs_set(1) # setzt curser auf sichtbar
     except curses.error:

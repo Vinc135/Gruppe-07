@@ -181,6 +181,11 @@ def handle_user_input(
 
 ## Main Menu (Ausgangsmenü) #####################################################################
 def main_menu():
+    """
+    Erstellt das Hauptmenü mit allen verfügbaren Aktionen.
+
+    @return: Tuple aus Menüoptionen, Action-Map und Titel
+    """
     menu_options = [
         "(0) Auto hinzufügen",
         "(1) Alle Autos anzeigen",
@@ -202,17 +207,47 @@ def main_menu():
 ############ Filter Typen
 
 def autos_anzeigen(stdscr):
+    """
+    Zeigt alle Autos an.
+
+    @param stdscr: curses Screen
+
+    @return: Weiterleitung zum Listenmenü
+    """
     return auto_liste_menu(stdscr, filter_type="alle", title="Alle Autos")
 
 def freie_autos(stdscr):
+    """
+    Zeigt alle freien (nicht vermieteten) Autos an.
+
+    @param stdscr: curses Screen
+
+    @return: Weiterleitung zum Listenmenü
+    """
     return auto_liste_menu(stdscr, filter_type="frei", title="Freie Autos")
 
 def vergebene_autos(stdscr):
+    """
+    Zeigt alle aktuell vermieteten Autos an.
+
+    @param stdscr: curses Screen
+
+    @return: Weiterleitung zum Listenmenü
+    """
     return auto_liste_menu(stdscr, filter_type="verliehen", title="Vermietete Autos")
 
 
 # Menü welches je nach ausgewähltem Filter alle Autos, freie Autos oder vermietete Autos anzeigt
 def auto_liste_menu(stdscr, filter_type, title):
+    """
+    Erstellt ein Menü zur Anzeige von Autos basierend auf einem Filter.
+
+    @param stdscr: curses Screen
+    @param filter_type: Filter ("alle", "frei", "verliehen")
+    @param title: Titel des Menüs
+
+    @return: Tuple aus Menüoptionen, Action-Map und Titel
+    """
     curses.curs_set(0)
 
     menu_options = ["(0) ZURÜCK"]
@@ -243,6 +278,14 @@ def auto_liste_menu(stdscr, filter_type, title):
 
 # Menü zeigt die möglichen Aktionen an die für das Auto durchgeführt werden können
 def auto_options_menu(stdscr, kennzeichen):
+    """
+    Zeigt Aktionen für ein ausgewähltes Auto an.
+
+    @param stdscr: curses Screen
+    @param kennzeichen: Kennzeichen des Autos
+
+    @return: Tuple aus Menüoptionen, Action-Map und Titel
+    """
     stdscr.refresh()
     curses.curs_set(0)
 
@@ -280,6 +323,15 @@ def auto_options_menu(stdscr, kennzeichen):
 
 # Funktion um ein Auto zu löschen und danach die Auto Liste zu aktualisieren
 def delete_and_refresh(stdscr, garage: Garage, kennzeichen):
+    """
+    Löscht ein Auto und aktualisiert die Anzeige.
+
+    @param stdscr: curses Screen
+    @param garage: Garage-Instanz
+    @param kennzeichen: Kennzeichen des Autos
+
+    @return: Aktualisierte Autoliste
+    """
     garage.auto_entfernen(kennzeichen)
     stdscr.refresh()
     stdscr.clear()
@@ -288,6 +340,14 @@ def delete_and_refresh(stdscr, garage: Garage, kennzeichen):
 
 # MENÜ, welches die Details eines Autos anzeigt, die mit deren Auswahl bearbeitet werden können
 def auto_detail_menu(stdscr, kennzeichen):
+    """
+    Zeigt Details eines Autos und ermöglicht Bearbeitung einzelner Attribute.
+
+    @param stdscr: curses Screen
+    @param kennzeichen: Kennzeichen des Autos
+
+    @return: Tuple aus Menüoptionen, Action-Map und Titel
+    """
     curses.curs_set(0)
     auto = Garage().auto_finden(kennzeichen)
 
@@ -315,6 +375,13 @@ def auto_detail_menu(stdscr, kennzeichen):
 
 # Funktion berechnet den erwarteten Umsatz nach aktuellem Stand der vermieteten Autos und zeigt diesen an
 def umsatz(stdscr):
+    """
+    Berechnet und zeigt den erwarteten Gesamtumsatz aller Vermietungen.
+
+    @param stdscr: curses Screen
+
+    @return: Rückkehr zum Hauptmenü
+    """
     garage = Garage()
     curses.curs_set(1) # setzt curser auf sichtbar
     stdscr.clear()

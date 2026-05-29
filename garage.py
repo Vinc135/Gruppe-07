@@ -21,6 +21,13 @@ class Garage:
             json.dump(data, f, indent=4)
 
     def auto_hinzufügen(self, auto: Auto):
+        """
+        Fügt ein neues Auto zur Garage hinzu.
+
+        @param auto: Auto-Objekt
+
+        @return: None
+        """
         data = self._load()
 
         data[auto.kennzeichen] = {
@@ -37,6 +44,13 @@ class Garage:
         self._save(data)
 
     def auto_entfernen(self, kennzeichen):
+        """
+        Entfernt ein Auto anhand des Kennzeichens.
+
+        @param kennzeichen: Kennzeichen des Autos
+
+        @return: None
+        """
         data = self._load()
 
         if kennzeichen in data:
@@ -44,10 +58,25 @@ class Garage:
             self._save(data)
 
     def auto_finden(self, kennzeichen):
+        """
+        Sucht ein Auto anhand des Kennzeichens.
+
+        @param kennzeichen: Kennzeichen des Autos
+
+        @return: Dictionary mit Autodaten oder None
+        """
         data = self._load()
         return data.get(str(kennzeichen))
     
     def auto_update(self, kennzeichen, auto) -> bool:
+        """
+        Aktualisiert ein bestehendes Auto.
+
+        @param kennzeichen: Kennzeichen des Autos
+        @param auto: Neue Autodaten
+
+        @return: True bei Erfolg, sonst False
+        """
         data = self._load()
         
         if kennzeichen not in data:
@@ -59,17 +88,39 @@ class Garage:
         return True
 
     def alle_autos(self):
+        """
+        Gibt alle gespeicherten Autos zurück.
+
+        @return: Dictionary aller Autos
+        """
         return self._load()
 
     def verfügbare_autos(self):
+        """
+        Gibt alle verfügbaren (nicht vermieteten) Autos zurück.
+
+        @return: Gefiltertes Dictionary
+        """
         data = self._load()
         return {k: v for k, v in data.items() if not v["verliehen"]}
 
     def verliehene_autos(self):
+        """
+        Gibt alle vermieteten Autos zurück.
+
+        @return: Gefiltertes Dictionary
+        """
         data = self._load()
         return {k: v for k, v in data.items() if v["verliehen"]}
 
     def zurueckgeben(self, kennzeichen):
+        """
+        Gibt ein Auto zurück (beendet Vermietung).
+
+        @param kennzeichen: Kennzeichen des Autos
+
+        @return: True bei Erfolg, sonst False
+        """
         data = self._load()
         
         if kennzeichen in data:
@@ -81,6 +132,11 @@ class Garage:
         return False
 
     def umsatz_berechnen(self):
+        """
+        Berechnet den erwarteten Gesamtumsatz aus laufenden Vermietungen.
+
+        @return: Gesamtumsatz
+        """
         data = self._load()
         umsatz = 0
 
@@ -92,6 +148,14 @@ class Garage:
         return umsatz
 
     def verleihen(self, kennzeichen, tage):
+        """
+        Markiert ein Auto als vermietet.
+
+        @param kennzeichen: Kennzeichen des Autos
+        @param tage: Mietdauer in Tagen
+
+        @return: True bei Erfolg, sonst False
+        """
         data = self._load()
 
         auto = data.get(str(kennzeichen))
@@ -106,6 +170,14 @@ class Garage:
         return True
 
     def fahrt_hinzufügen(self, kennzeichen, kilometer):
+        """
+        Addiert gefahrene Kilometer zu einem Auto.
+
+        @param kennzeichen: Kennzeichen des Autos
+        @param kilometer: Gefahrene Kilometer
+
+        @return: True bei Erfolg
+        """
         data = self._load()
 
         auto = data.get(str(kennzeichen))
