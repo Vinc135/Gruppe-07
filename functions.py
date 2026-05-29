@@ -12,6 +12,17 @@ ASCII_HEADER = [
 
 
 def safe_addstr(stdscr, row, col, text, attr=None):
+    """
+    Gibt Text sicher auf dem Bildschirm aus und verhindert Überläufe.
+
+    @param stdscr: curses Screen
+    @param row: Zeile für die Ausgabe
+    @param col: Spalte für die Ausgabe
+    @param text: Auszugebender Text
+    @param attr: Optionales Attribut (z. B. Hervorhebung)
+
+    @return: None
+    """
     max_y, max_x = stdscr.getmaxyx()
 
     if row < 0 or row >= max_y or col >= max_x:
@@ -41,6 +52,13 @@ def safe_addstr(stdscr, row, col, text, attr=None):
 
 
 def draw_ascii_header(stdscr):
+    """
+    Zeichnet den ASCII-Header und gibt den Offset für den Inhalt zurück.
+
+    @param stdscr: curses Screen
+
+    @return: Startzeile für weiteren Inhalt
+    """
     max_y, max_x = stdscr.getmaxyx()
 
     for row, line in enumerate(ASCII_HEADER):
@@ -55,6 +73,16 @@ def draw_ascii_header(stdscr):
 
 
 def read_limited_input(stdscr, row, col, max_length=30):
+    """
+    Liest eine Benutzereingabe mit begrenzter Länge ein.
+
+    @param stdscr: curses Screen
+    @param row: Zeile der Eingabe
+    @param col: Spalte der Eingabe
+    @param max_length: Maximale Länge der Eingabe
+
+    @return: Eingegebener String
+    """
     max_y, max_x = stdscr.getmaxyx()
 
     if row >= max_y:
@@ -72,6 +100,13 @@ def read_limited_input(stdscr, row, col, max_length=30):
     return value
 
 def draw_menu(stdscr):
+    """
+    Initialisiert das Hauptmenü und startet die Navigation.
+
+    @param stdscr: curses Screen
+
+    @return: None
+    """
     try:
         curses.curs_set(0)  # Hide the cursor
     except curses.error:
@@ -104,6 +139,19 @@ def handle_user_input(
     title=None,
     prompt="Navigiere mit den Pfeiltasten und drücke die rechte Pfeiltaste, um eine Auswahl zu treffen: ",
 ):
+    """
+    Verarbeitet Benutzereingaben und steuert die Menü-Navigation.
+
+    @param stdscr: curses Screen
+    @param menu_options: Liste der Menüeinträge
+    @param current_row: Aktuell ausgewählte Zeile
+    @param key_input: Zwischenspeicher für Zahleneingaben
+    @param action_map: Mapping von Auswahl zu Funktionen
+    @param title: Optionaler Titel des Menüs
+    @param prompt: Hinweistext für die Bedienung
+
+    @return: Tuple aus Menüoptionen, Action-Map und Titel
+    """
     while True:
         stdscr.clear()
         content_offset = draw_ascii_header(stdscr)
