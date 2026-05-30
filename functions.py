@@ -150,7 +150,7 @@ def handle_user_input(
     @param title: Optionaler Titel des Menüs
     @param prompt: Hinweistext für die Bedienung
 
-    @return: Tuple aus Menüoptionen, Action-Map und Titel
+    @return: Tupel aus Menüoptionen, Action-Map und Titel
     """
     while True:
         stdscr.clear()
@@ -232,7 +232,7 @@ def main_menu():
     """
     Erstellt das Hauptmenü mit allen verfügbaren Aktionen.
 
-    @return: Tuple aus Menüoptionen, Action-Map und Titel
+    @return: Tupel aus Menüoptionen, Action-Map und Titel
     """
     menu_options = [
         "(0) Auto hinzufügen",
@@ -294,7 +294,7 @@ def auto_liste_menu(stdscr, filter_type, title):
     @param filter_type: Filter ("alle", "frei", "verliehen")
     @param title: Titel des Menüs
 
-    @return: Tuple aus Menüoptionen, Action-Map und Titel
+    @return: Tupel aus Menüoptionen, Action-Map und Titel
     """
     curses.curs_set(0)
 
@@ -332,7 +332,7 @@ def auto_options_menu(stdscr, kennzeichen):
     @param stdscr: curses Screen
     @param kennzeichen: Kennzeichen des Autos
 
-    @return: Tuple aus Menüoptionen, Action-Map und Titel
+    @return: Tupel aus Menüoptionen, Action-Map und Titel
     """
     stdscr.refresh()
     curses.curs_set(0)
@@ -394,7 +394,7 @@ def auto_detail_menu(stdscr, kennzeichen):
     @param stdscr: curses Screen
     @param kennzeichen: Kennzeichen des Autos
 
-    @return: Tuple aus Menüoptionen, Action-Map und Titel
+    @return: Tupel aus Menüoptionen, Action-Map und Titel
     """
     curses.curs_set(0)
     auto = Garage().auto_finden(kennzeichen)
