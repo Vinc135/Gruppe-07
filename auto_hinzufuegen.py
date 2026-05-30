@@ -2,7 +2,7 @@ import curses
 import functions
 from garage import Garage
 from auto import Auto
-from auto_validierung import validate_auto_value
+from auto_validierung import validiere_auto_wert
 
 # Funktion um ein neues Auto hinzuzufügen
 # Die Werte werden über die Konsole einzeln nacheinander eingegeben
@@ -50,21 +50,21 @@ def auto_hinzufuegen(stdscr):
         stdscr.getch()
         return functions.main_menu()
 
-    marke, error = validate_auto_value("marke", inputs.get("marke"))
+    marke, error = validiere_auto_wert("marke", inputs.get("marke"), {})
     if error:
         functions.safe_addstr(stdscr, content_offset + len(fields) + 1, 0, f"Fehler: {error}")
         stdscr.refresh()
         stdscr.getch()
         return functions.main_menu()
 
-    modell, error = validate_auto_value("modell", inputs.get("modell"))
+    modell, error = validiere_auto_wert("modell", inputs.get("modell"), {})
     if error:
         functions.safe_addstr(stdscr, content_offset + len(fields) + 1, 0, f"Fehler: {error}")
         stdscr.refresh()
         stdscr.getch()
         return functions.main_menu()
 
-    baujahr, error = validate_auto_value("baujahr", inputs.get("baujahr"))
+    baujahr, error = validiere_auto_wert("baujahr", inputs.get("baujahr"), {})
     if error:
         functions.safe_addstr(stdscr, content_offset + len(fields) + 1, 0, f"Fehler: {error}")
         stdscr.refresh()
@@ -73,14 +73,14 @@ def auto_hinzufuegen(stdscr):
 
     kilometer = int(inputs.get("kilometer") or 0)
 
-    verbrauch, error = validate_auto_value("verbrauch", inputs.get("verbrauch"))
+    verbrauch, error = validiere_auto_wert("verbrauch", inputs.get("verbrauch"), {})
     if error:
         functions.safe_addstr(stdscr, content_offset + len(fields) + 1, 0, f"Fehler: {error}")
         stdscr.refresh()
         stdscr.getch()
         return functions.main_menu()
 
-    tagespreis, error = validate_auto_value("tagespreis", inputs.get("tagespreis"))
+    tagespreis, error = validiere_auto_wert("tagespreis", inputs.get("tagespreis"), {})
     if error:
         functions.safe_addstr(stdscr, content_offset + len(fields) + 1, 0, f"Fehler: {error}")
         stdscr.refresh()

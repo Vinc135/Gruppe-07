@@ -1,6 +1,6 @@
 import curses
 import functions
-import auto_validierung
+from auto_validierung import validiere_auto_wert
 from garage import Garage
 from auto import Auto
 
@@ -88,7 +88,7 @@ def auto_bearbeiten(stdscr, filter, kennzeichen, auto):
 
     # Sonst normale Änderung des Attributs im Auto Dictionary
     else:
-        neuer_wert, error_message = auto_validierung.validiere_auto_wert(filter, neuer_wert, auto)
+        neuer_wert, error_message = validiere_auto_wert(filter, neuer_wert, auto)
 
         if error_message == "":
             auto[filter] = neuer_wert
