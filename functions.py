@@ -308,14 +308,14 @@ def auto_liste_menu(stdscr, filter_type, title):
     autos = garage.alle_autos()
 
     i = 1
-    for kennzeichen, daten in autos.items():
-        if filter_type == "frei" and daten["verliehen"]:
+    for kennzeichen, auto in autos.items():
+        if filter_type == "frei" and auto["verliehen"]:
             continue
-        if filter_type == "verliehen" and not daten["verliehen"]:
+        if filter_type == "verliehen" and not auto["verliehen"]:
             continue
 
         menu_options.append(
-            f"({i}) {kennzeichen} | {daten['marke']} | {daten['tagespreis']}€/Tag"
+            f"({i}) {kennzeichen} | {auto['marke']} | {auto['modell']} | {auto['baujahr']} | {auto['tagespreis']}€/Tag"
         )
 
         action_map[i] = lambda stdscr, k=kennzeichen: auto_options_menu(stdscr, k)
@@ -367,7 +367,7 @@ def auto_options_menu(stdscr, kennzeichen):
         action_map[i] = lambda stdscr: vermieten_flow(stdscr, garage, kennzeichen)
         i += 1
 
-    return menu_options, action_map, f"Auto {kennzeichen}"
+    return menu_options, action_map, f"Auto: {kennzeichen} | {auto['marke']} | {auto['modell']} | {auto['baujahr']} | {auto['kilometer']}km | {auto['verbrauch']}L | {auto['tagespreis']}€/Tag | Verliehen: {auto['verliehen']} | Tageszahl:{auto['verliehen_bis']}"
 
 # Funktion um ein Auto zu löschen und danach die Auto Liste zu aktualisieren
 def delete_and_refresh(stdscr, garage: Garage, kennzeichen):
