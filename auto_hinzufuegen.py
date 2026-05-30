@@ -2,6 +2,7 @@ import curses
 import functions
 from garage import Garage
 from auto import Auto
+from auto_validierung import validate_auto_value
 
 # Funktion um ein neues Auto hinzuzufügen
 # Die Werte werden über die Konsole einzeln nacheinander eingegeben
@@ -37,48 +38,47 @@ def auto_hinzufuegen(stdscr):
         stdscr.getch()
         return functions.main_menu()
 
-    if not (inputs.get("marke") or "").strip():
-        functions.safe_addstr(stdscr, content_offset + len(fields) + 1, 0, "Fehler: Marke darf nicht leer sein. Drücke eine Taste, um zurückzugehen.")
+    marke, error = validate_auto_value("marke", inputs.get("marke"))
+    if error:
+        functions.safe_addstr(stdscr, content_offset + len(fields) + 1, 0, f"Fehler: {error}")
         stdscr.refresh()
         stdscr.getch()
         return functions.main_menu()
 
-    if not (inputs.get("modell") or "").strip():
-        functions.safe_addstr(stdscr, content_offset + len(fields) + 1, 0, "Fehler: Modell darf nicht leer sein. Drücke eine Taste, um zurückzugehen.")
+    modell, error = validate_auto_value("modell", inputs.get("modell"))
+    if error:
+        functions.safe_addstr(stdscr, content_offset + len(fields) + 1, 0, f"Fehler: {error}")
         stdscr.refresh()
         stdscr.getch()
         return functions.main_menu()
 
-    baujahr_raw = (inputs.get("baujahr") or "").strip()
-    if not baujahr_raw:
-        functions.safe_addstr(stdscr, content_offset + len(fields) + 1, 0, "Fehler: Kein Baujahr angegeben. Drücke eine Taste, um zurückzugehen.")
+    baujahr, error = validate_auto_value("baujahr", inputs.get("baujahr"))
+    if error:
+        functions.safe_addstr(stdscr, content_offset + len(fields) + 1, 0, f"Fehler: {error}")
         stdscr.refresh()
         stdscr.getch()
         return functions.main_menu()
-    baujahr = int(baujahr_raw)
 
     kilometer = int(inputs.get("kilometer") or 0)
 
-    verbrauch_raw = (inputs.get("verbrauch") or "").strip()
-    if not verbrauch_raw:
-        functions.safe_addstr(stdscr, content_offset + len(fields) + 1, 0, "Fehler: Kein Verbrauch angegeben. Drücke eine Taste, um zurückzugehen.")
+    verbrauch, error = validate_auto_value("verbrauch", inputs.get("verbrauch"))
+    if error:
+        functions.safe_addstr(stdscr, content_offset + len(fields) + 1, 0, f"Fehler: {error}")
         stdscr.refresh()
         stdscr.getch()
         return functions.main_menu()
-    verbrauch = float(verbrauch_raw)
 
-    tagespreis_raw = (inputs.get("tagespreis") or "").strip()
-    if not tagespreis_raw:
-        functions.safe_addstr(stdscr, content_offset + len(fields) + 1, 0, "Fehler: Kein Tagespreis angegeben. Drücke eine Taste, um zurückzugehen.")
+    tagespreis, error = validate_auto_value("tagespreis", inputs.get("tagespreis"))
+    if error:
+        functions.safe_addstr(stdscr, content_offset + len(fields) + 1, 0, f"Fehler: {error}")
         stdscr.refresh()
         stdscr.getch()
         return functions.main_menu()
-    tagespreis = float(tagespreis_raw)
 
     auto = Auto(
         inputs.get("kennzeichen"),
-        inputs.get("marke"),
-        inputs.get("modell"),
+        marke,
+        modell,
         baujahr,
         kilometer,
         verbrauch,
