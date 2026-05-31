@@ -367,7 +367,7 @@ def auto_options_menu(stdscr, kennzeichen):
         action_map[i] = lambda stdscr: vermieten_flow(stdscr, garage, kennzeichen)
         i += 1
 
-    return menu_options, action_map, f"Auto: {kennzeichen} | {auto['marke']} | {auto['modell']} | {auto['baujahr']} | {auto['kilometer']}km | {auto['verbrauch']}L | {auto['tagespreis']}€/Tag | Verliehen: {auto['verliehen']} | Tageszahl:{auto['verliehen_bis']}"
+    return menu_options, action_map, f"Auto: {kennzeichen} | {auto['marke']} | {auto['modell']} | {auto['baujahr']} | {auto['kilometer']}km | {auto['verbrauch']}L | {auto['tagespreis']}€/Tag | Verliehen: {auto['verliehen']} | Tageszahl: {auto['verliehen_bis']}"
 
 # Funktion um ein Auto zu löschen und danach die Auto Liste zu aktualisieren
 def delete_and_refresh(stdscr, garage: Garage, kennzeichen):
