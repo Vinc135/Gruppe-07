@@ -16,8 +16,8 @@
         "kilometer": 78000,
         "verbrauch": 9.2,
         "tagespreis": 19.0,
-        "verliehen": false,
-        "verliehen_bis": 0
+        "verliehen": true,
+        "verliehen_bis": 4
     },
     "WOB-F-440E": {
         "marke": "Volkswagen",
@@ -36,7 +36,7 @@
         "kilometer": 174000,
         "verbrauch": 7.7,
         "tagespreis": 1.0,
-        "verliehen": false,
-        "verliehen_bis": 0
+        "verliehen": true,
+        "verliehen_bis": 2
     }
 }
